@@ -74,8 +74,10 @@ export const Head = ({ data, location }) => (
 )
 
 export const pageQuery = graphql`
-  query PageQuery($pageID: String) {
-    page: kontentItemPageTemplate(system: { id: { eq: $pageID } }) {
+  query PageQuery($pageID: String, $languageCode: String) {
+    page: kontentItemPageTemplate(
+      system: { id: { eq: $pageID }, language: { eq: $languageCode } }
+    ) {
       system {
         id
         codename

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import AccordionBasic from '../../../../components/Accordion/variants/AccordionBasic'
 import Modal from '../../../../components/Modal'
 import { RichTextElement } from '@kontent-ai/gatsby-components'
@@ -13,36 +13,6 @@ const ContentsPageTemplate = ({
   itemId,
   itemCodename,
 }) => {
-  const [trademarkInfo, settrademarkInfo] = useState([])
-  let pagePath = path?.split('/')
-
-  useEffect(() => {
-    if (pagePath[2] && pagePath[2] === 'copyrights-trademarks') {
-      async function fetchData() {
-        await fetch(
-          `https://edwardsprod.azurewebsites.net/Edwards.Core/Shared/Item/c7edaa8e963149c5a9b841aca4e5a228`
-        )
-          .then((response) => response.json())
-          .then((results) => {
-            if (body.value.includes(results)) {
-              return
-            }
-            body.value =
-              body.value +
-              '<p>' +
-              results?.languages[0]?.system?.codename +
-              '</p>'
-            settrademarkInfo(body.value)
-            console.log(results)
-          })
-          .catch((error) => {
-            console.log(error)
-          })
-      }
-      fetchData()
-    }
-  }, [])
-
   return (
     <>
       <div data-kontent-item-id={itemId}>

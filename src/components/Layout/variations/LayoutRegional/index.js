@@ -33,15 +33,13 @@ const LayoutRegional = ({ children, languageCode, header, footer }) => {
   }, [])
 
   useEffect(() => {
-    // This is just an example of SDK initialization inside ES6 module.
-    // HTML markup should still contain all necessary data-attributes (e.g. .layout element).
     const kontentSmartLink = KontentSmartLink.initialize({
       queryParam: 'enable-ksl-sdk',
     })
     return () => {
       kontentSmartLink.destroy()
     }
-  })
+  }, [])
 
   const navLogo = header.elements.logo
   const navLinks = prepareDataLinks(
@@ -64,6 +62,7 @@ const LayoutRegional = ({ children, languageCode, header, footer }) => {
       data-kontent-language-codename={languageCode}
     >
       <NavbarRegional
+        languageCode={languageCode}
         navLogo={navLogo}
         navLinks={navLinks}
         languages={languages}

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link } from 'gatsby'
+import SiteLink from '../../SiteLink'
 
 const CardBasic = ({ data, id }) => {
   if (!data) {
@@ -49,7 +49,7 @@ const CardBasic = ({ data, id }) => {
       >
         {description}
       </p>
-      <Link
+      <SiteLink
         to={cta_link}
         className="btn btn-blue cardBasic__cta"
         aria-label={cta_aria_label}
@@ -57,7 +57,7 @@ const CardBasic = ({ data, id }) => {
         data-kontent-element-codename={anchorCodename}
       >
         {cta_text}
-      </Link>
+      </SiteLink>
     </article>
   )
 }

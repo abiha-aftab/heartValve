@@ -1,5 +1,6 @@
 import React from 'react'
 import { Link } from 'gatsby'
+import SiteLink from '../../../../components/SiteLink'
 import { RichTextElement } from '@kontent-ai/gatsby-components'
 
 const FooterDefault = ({ footerLinks = null, footerText = null }) => {
@@ -19,15 +20,9 @@ const FooterDefault = ({ footerLinks = null, footerText = null }) => {
                     const { name, url } = link
                     return (
                       <li className="footerDefault__list-item" key={index}>
-                        {url.indexOf('https') !== -1 ? (
-                          <a href={url} target="_blank" rel="noreferrer" className="footerDefault__list-link">
-                            {name}
-                          </a>
-                        ) : (
-                          <Link to={url} className="footerDefault__list-link">
-                            {name}
-                          </Link>
-                        )}
+                        <SiteLink to={url} className="footerDefault__list-link">
+                          {name}
+                        </SiteLink>
                       </li>
                     )
                   })}

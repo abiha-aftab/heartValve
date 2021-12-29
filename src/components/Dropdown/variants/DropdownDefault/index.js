@@ -3,6 +3,7 @@ import { FaCaretDown, FaCaretUp } from 'react-icons/fa'
 import { motion, AnimatePresence } from 'framer-motion'
 import { dropdownVariant } from '../../../../assets/animations/animations'
 import { Link } from 'gatsby'
+import { isExternalUrl } from '../../../../utils/links'
 
 const Dropdown = ({ dropdown, categorySlug, languageCode = null }) => {
   const {
@@ -54,7 +55,7 @@ const Dropdown = ({ dropdown, categorySlug, languageCode = null }) => {
                   data-kontent-item-id={id}
                   data-kontent-element-codename={codename}
                 >
-                  {url.indexOf('https') !== -1 ? (
+                  {isExternalUrl(url) ? (
                     <a
                       href={url}
                       target="_blank"

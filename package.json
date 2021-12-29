@@ -14,7 +14,8 @@
     "build:offline": "KONTENT_OFFLINE=1 gatsby build",
     "develop:offline": "KONTENT_OFFLINE=1 gatsby develop",
     "serve": "gatsby serve",
-    "clean": "gatsby clean"
+    "clean": "gatsby clean",
+    "test": "jest"
   },
   "keywords": [
     "Gatsby",
@@ -33,12 +34,19 @@
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "@testing-library/dom": "^10.4.2",
+    "@testing-library/jest-dom": "^6.10.0",
+    "@testing-library/react": "^16.3.3",
+    "babel-jest": "^30.5.2",
+    "babel-preset-gatsby": "^3.16.0",
     "gatsby": "^5.16.1",
     "gatsby-plugin-image": "^3.16.0",
     "gatsby-plugin-sass": "^6.16.0",
     "gatsby-plugin-sharp": "^5.16.0",
     "gatsby-source-filesystem": "^5.16.0",
     "gatsby-transformer-sharp": "^5.16.0",
+    "jest": "^30.5.2",
+    "jest-environment-jsdom": "^30.5.2",
     "prettier": "^3.9.10",
     "react-icons": "^5.7.0",
     "sass": "~1.106.1"

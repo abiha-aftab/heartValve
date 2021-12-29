@@ -36,7 +36,7 @@ export const Head = ({ location }) => (
 
 export const pageQuery = graphql`
   query IndexQuery {
-    home: kontentItemHomeTemplate {
+    home: kontentItemHomeTemplate(system: { language: { eq: "default" } }) {
       system {
         id
         codename

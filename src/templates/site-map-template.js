@@ -2,54 +2,22 @@ import React from 'react'
 import { graphql } from 'gatsby'
 import SiteMap from '../components/SiteMap'
 import SEO from '../components/SEO'
+import { groupPagesByTopic } from '../utils/pagePath'
 import Layout from '../components/Layout/variations/LayoutDefault'
 
-export default function SiteMapTemplate({ pageContext: { languageCode, pageID }, data }) {
-    let result = data.page.nodes.reduce((page, curr) => {
-
-        let value = ""; let found = false;
-        const slugUrl = curr.elements.slug.value;
-
-        if (curr.elements.topics.value && curr.elements.topics.value.length > 0) {
-            value = curr.elements.topics.value[0].name;
-
-            if (!page[value]) { page[value] = { name: value, links: [] } }
-            found = page[value].links.find(link => link.elements.title.value === curr.elements.title.value);
-
-            if (!found) {
-                const topicUrl = value.replace(/\s+/g, '-').replace(/^\/+|\/+$/g, '').toLowerCase();
-
-                if (topicUrl !== slugUrl) {
-                    curr.elements.slug.value = `/${topicUrl}/${slugUrl}`;
-                } else {
-                    curr.elements.slug.value = `/${slugUrl}`;
-                }
-
-                curr.elements.slug.value = curr.elements.slug.value.endsWith('//') ? curr.elements.slug.value.slice(0, -2) : curr.elements.slug.value;
-            }
-        } else {
-            value = "Miscellaneous";
-        }
-
-        if (slugUrl !== "site-map") {
-            if (!page[value]) { page[value] = { name: value, links: [] } }
-
-            if (!found) {
-                page[value].links.push(curr);
-            }
-        }
-
-        return page;
-    }, {});
-
-    return (
-        <Layout>
-            <SiteMap result={result} languageCode={""} siteMapPage={data.siteMapPage} />
-        </Layout>
-    )
+export default function SiteMapTemplate({ data }) {
+  return (
+    <Layout>
+      <SiteMap
+        groups={groupPagesByTopic(data.page.nodes)}
+        languageCode=""
+        siteMapPage={data.siteMapPage}
+      />
+    </Layout>
+  )
 }
 
-export const Head = ({ data, location, pageContext }) => (
+export const Head = ({ data, location }) => (
   <SEO
     title={data.siteMapPage?.elements.title.value || 'Site map'}
     pathname={location.pathname}
@@ -58,7 +26,9 @@ export const Head = ({ data, location, pageContext }) => (
 
 export const pageQuery = graphql`
   query SiteMapQuery($languageCode: String, $pageID: String) {
-    siteMapPage: kontentItemPageTemplate(system: { id: { eq: $pageID } }) {
+    siteMapPage: kontentItemPageTemplate(
+      system: { id: { eq: $pageID }, language: { eq: $languageCode } }
+    ) {
       system {
         id
         codename

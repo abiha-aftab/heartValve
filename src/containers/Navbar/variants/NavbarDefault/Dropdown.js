@@ -3,6 +3,8 @@ import { FaCaretDown, FaCaretUp } from 'react-icons/fa'
 import { motion, AnimatePresence } from 'framer-motion'
 import { dropdownVariant } from '../../../../assets/animations/animations'
 import { Link } from 'gatsby'
+import { isExternalUrl } from '../../../../utils/links'
+import { useCurrentPath } from '../../../../utils/useCurrentPath'
 
 const Dropdown = ({
   activeDropdown,
@@ -19,13 +21,14 @@ const Dropdown = ({
     }
   }
 
-  const isBrowser = () => typeof window !== "undefined"
+  const currentPath = useCurrentPath()
+  const isCurrentSection = url !== '/' && currentPath.startsWith(url)
 
   return (
     <li className="navbarDefault__nav-item">
       <button
         className={
-          activeDropdown === id || (isBrowser() && window.location.pathname.indexOf(url) !== -1)
+          activeDropdown === id || isCurrentSection
             ? 'navbarDefault__nav-link navbarDefault__nav-link--active'
             : 'navbarDefault__nav-link'
         }
@@ -50,7 +53,7 @@ const Dropdown = ({
               return (
                 <li className="navbarDefault__dropdown-item" key={index}>
                   {
-                    url.indexOf('https') !== -1
+                    isExternalUrl(url)
                       ? <a href={url} target="_blank" rel="noreferrer" className="navbarDefault__dropdown-link">{name}</a>
                       : <button onClick={(e) => toggleDropdown(e, id)}><Link to={url} className="navbarDefault__dropdown-link">{name}</Link></button>
                   }

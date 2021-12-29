@@ -1,44 +1,38 @@
-export const prepareDataLinks = (data, languageCode = null, linksType = '') => {
-  let navLinks = []
-  data.forEach((link) => {
-    const {
-      title: { value: title },
-      slug,
-    } = link.elements
-    let links = link.elements.links ? link.elements.links.value : []
-    if (languageCode && linksType === 'footer') {
-      navLinks = links.length ? extractChillLinks(links, languageCode) : []
-    } else {
-      let baseURL = slug.value ? slug.value : ''
-      navLinks.push({
-        name: title,
-        url: baseURL === '/' ? baseURL : `/${baseURL}`,
-        links: links.length ? extractChillLinks(links, baseURL) : [],
-      })
-    }
-  })
-  return navLinks
-}
-const extractChillLinks = (data, baseURL) => {
-  let childLinks = []
-  data.forEach((link) => {
-    const {
-      title: { value: title },
-    } = link.elements
-    let slug = link.elements.url
+import { isExternalUrl, localisePath } from './links'
+
+const childLinks = (links, baseURL) =>
+  links.map((link) => {
+    const slug = link.elements.url
       ? link.elements.url.value
       : link.elements.slug.value
-    let url = slug
-      ? slug.indexOf('https') !== -1
+    let url = ''
+    if (slug) {
+      url = isExternalUrl(slug)
         ? slug
         : baseURL === slug || baseURL === ''
         ? `/${slug}`
         : `/${baseURL}/${slug}`
-      : ''
-    childLinks.push({
-      name: title,
-      url: url,
-    })
+    }
+    return { name: link.elements.title.value, url }
   })
-  return childLinks
+
+// Turns header/footer menu items from Kontent into { name, url, links }.
+// Regional footers are a flat list of every menu's links under /<language>.
+export const prepareDataLinks = (data, languageCode = null, linksType = '') => {
+  if (languageCode && linksType === 'footer') {
+    return data.flatMap((menu) =>
+      childLinks(menu.elements.links?.value || [], languageCode)
+    )
+  }
+  return data.map((link) => {
+    const slug = link.elements.slug?.value || ''
+    const baseURL = slug === 'home' ? '/' : slug
+    return {
+      name: link.elements.title.value,
+      url: localisePath(baseURL === '/' ? '/' : `/${baseURL}`, languageCode),
+      links: childLinks(link.elements.links?.value || [], baseURL).map(
+        (child) => ({ ...child, url: localisePath(child.url, languageCode) })
+      ),
+    }
+  })
 }

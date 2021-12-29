@@ -1,13 +1,9 @@
 import React from 'react'
-import { Link } from 'gatsby'
-import { dropdownVariant } from '../../../../assets/animations/animations'
+import SiteLink from '../../../SiteLink'
 
 const List = ({ sidebarLinks }) => {
   return (
-    <ul
-      variants={dropdownVariant}
-      className="sidebarDefault__list"
-    >
+    <ul className="sidebarDefault__list">
       {sidebarLinks.map((link) => {
         return link.url === '' ? (
           <li
@@ -18,24 +14,13 @@ const List = ({ sidebarLinks }) => {
           </li>
         ) : (
           <li className="sidebarDefault__item" key={link.url}>
-            {link.url.indexOf('https') !== -1 ? (
-              <a
-                href={link.url}
-                target="_blank"
-                rel="noreferrer"
-                className="sidebarDefault__link"
-              >
-                {link.name}
-              </a>
-            ) : (
-              <Link
-                to={link.url}
-                className="sidebarDefault__link"
-                activeClassName="sidebarDefault__link--active"
-              >
-                {link.name}
-              </Link>
-            )}
+            <SiteLink
+              to={link.url}
+              className="sidebarDefault__link"
+              activeClassName="sidebarDefault__link--active"
+            >
+              {link.name}
+            </SiteLink>
           </li>
         )
       })}

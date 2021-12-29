@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Link } from 'gatsby'
+import SiteLink from '../../../../components/SiteLink'
 import {
   ImageElement,
   RichTextElement,
@@ -39,7 +39,7 @@ const ContentsDefault = ({ data }) => {
             } = anchor.elements
             const { id, codename } = anchor.system
             return (
-              <Link
+              <SiteLink
                 key={codename}
                 data-kontent-item-id={id}
                 data-kontent-element-codename={codename}
@@ -48,7 +48,7 @@ const ContentsDefault = ({ data }) => {
                 className="btn btn-blue"
               >
                 {name}
-              </Link>
+              </SiteLink>
             )
           })}
         </div>

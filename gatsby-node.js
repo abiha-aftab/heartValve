@@ -1,6 +1,22 @@
-exports.createPages = async ({ actions, graphql }) => {
+const {
+  buildPagePath,
+  pageSlug,
+  siteMapPath,
+  topicSlug,
+} = require('./src/utils/pagePath')
+
+const templates = {
+  page: require.resolve(`./src/templates/page-template.js`),
+  pageRegional: require.resolve(`./src/templates/page-template-regional.js`),
+  siteMap: require.resolve(`./src/templates/site-map-template.js`),
+  siteMapRegional: require.resolve(
+    `./src/templates/site-map-template-regional.js`
+  ),
+}
+
+exports.createPages = async ({ actions, graphql, reporter }) => {
   const { createPage } = actions
-  const { data } = await graphql(`
+  const { data, errors } = await graphql(`
     query {
       pages: allKontentItemPageTemplate {
         nodes {
@@ -25,80 +41,65 @@ exports.createPages = async ({ actions, graphql }) => {
       }
     }
   `)
+  if (errors) {
+    reporter.panicOnBuild('Could not load page templates from Kontent', errors)
+    return
+  }
 
-  let languages = []
-  let siteMapPageID = ''
+  const languages = new Set()
+  const siteMapPageIds = new Map()
+  const createdPaths = new Set()
 
-  data.pages.nodes.forEach((page) => {
+  for (const page of data.pages.nodes) {
     const {
       system: { id: pageID, language },
       elements: {
         title: { value: title },
         slug: { value: slug },
+        topics,
       },
     } = page
+    languages.add(language)
 
-    // for getting site map page id
+    // The site-map page only supplies the title and banner for its template.
     if (slug === 'site-map') {
-      siteMapPageID = pageID
+      siteMapPageIds.set(language, pageID)
+      continue
     }
-    // maintain the languages
-    languages.push(language)
 
-    let category = page.elements.topics.value
-
-    category = category.length > 0 ? category[0].name : ''
-    const pageSlug =
-      slug === 'home'
-        ? ''
-        : slug
-            .replace(/^\/+|\/+$/g, '')
-            .toLowerCase()
-            .trim()
-    const categorySlug = category
-      .replace(/\s+/g, '-')
-      .replace(/^\/+|\/+$/g, '')
-      .toLowerCase()
-    const regionalPath = language !== 'default' ? `/${language}` : ''
-    const path =
-      categorySlug === pageSlug ||
-      categorySlug === 'regional' ||
-      categorySlug === ''
-        ? `${regionalPath}/${pageSlug}`
-        : `${regionalPath}/${categorySlug}/${pageSlug}`
-
-    const item = {
-      url: path,
-      pageSlug: pageSlug,
-      name: title,
-      category: category,
-      categorySlug: categorySlug,
-    }
+    const category = topics.value[0]?.name || ''
+    const path = buildPagePath({ slug, topic: category, language })
+    // Kontent's language fallback returns untranslated items again for every
+    // language; they resolve to a path that already exists.
+    if (createdPaths.has(path)) continue
+    createdPaths.add(path)
 
     createPage({
-      path: path,
-      component:
-        language !== 'default'
-          ? require.resolve(`./src/templates/page-template-regional.js`)
-          : require.resolve(`./src/templates/page-template.js`),
-      context: { languageCode: language, pageID, item },
+      path,
+      component: language === 'default' ? templates.page : templates.pageRegional,
+      context: {
+        languageCode: language,
+        pageID,
+        item: {
+          url: path,
+          pageSlug: pageSlug(slug),
+          name: title,
+          category,
+          categorySlug: topicSlug(category),
+        },
+      },
     })
-  })
+  }
 
-  if (languages && languages.length > 0) {
-    // remove duplicates
-    languages = languages.filter((a, b) => languages.indexOf(a) === b)
-    languages.forEach((language) => {
-      const path =
-        language !== 'default' ? `/${language}/site-map` : '/site-map'
-      createPage({
-        path: path,
-        component:
-          language === 'default'
-            ? require.resolve(`./src/templates/site-map-template.js`)
-            : require.resolve(`./src/templates/site-map-template-regional.js`),
-        context: { languageCode: language, pageID: siteMapPageID },
-      })
+  for (const language of languages) {
+    createPage({
+      path: siteMapPath(language),
+      component:
+        language === 'default' ? templates.siteMap : templates.siteMapRegional,
+      context: {
+        languageCode: language,
+        pageID: siteMapPageIds.get(language) || '',
+      },
     })
   }
 }

@@ -72,7 +72,7 @@ const query = graphql`
         trustArc
       }
     }
-    header: kontentItemHeader {
+    header: kontentItemHeader(system: { language: { eq: "default" } }) {
       elements {
         head_scripts {
           value

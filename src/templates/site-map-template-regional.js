@@ -2,51 +2,26 @@ import React from 'react'
 import { graphql } from 'gatsby'
 import SiteMap from '../components/SiteMap'
 import SEO from '../components/SEO'
+import { groupPagesByTopic } from '../utils/pagePath'
 import LayoutRegional from '../components/Layout/variations/LayoutRegional'
 
-export default function SiteMapTemplateRegional({ pageContext: { languageCode }, data }) {
-    let result = data.page.nodes.reduce((page, curr) => {
-
-        let value = ""; let found = false;
-        const slugUrl = curr.elements.slug.value;
-
-        if (curr.elements.topics.value && curr.elements.topics.value.length > 0) {
-            value = curr.elements.topics.value[0].name;
-
-            if (!page[value]) { page[value] = { name: value, links: [] } }
-            found = page[value].links.find(link => link.elements.title.value === curr.elements.title.value);
-
-            if (!found) {
-                const topicUrl = value.replace(/\s+/g, '-').replace(/^\/+|\/+$/g, '').toLowerCase();
-
-                if (topicUrl !== slugUrl && topicUrl !== "regional") {
-                    curr.elements.slug.value = `/${languageCode}/${topicUrl}/${slugUrl}`;
-                } else {
-                    curr.elements.slug.value = `/${languageCode}/${slugUrl}`;
-                }
-
-                curr.elements.slug.value = curr.elements.slug.value.endsWith('//') ? curr.elements.slug.value.slice(0, -2) : curr.elements.slug.value;
-            }
-        } else {
-            value = "Miscellaneous";
-        }
-
-        if (slugUrl !== "site-map") {
-            if (!page[value]) { page[value] = { name: value, links: [] } }
-
-            if (!found) {
-                page[value].links.push(curr);
-            }
-        }
-
-        return page;
-    }, {});
-
-    return (
-        <LayoutRegional languageCode={languageCode} header={data.header} footer={data.footer}>
-            <SiteMap result={result} languageCode={languageCode} siteMapPage={data.siteMapPage} />
-        </LayoutRegional>
-    )
+export default function SiteMapTemplateRegional({
+  pageContext: { languageCode },
+  data,
+}) {
+  return (
+    <LayoutRegional
+      languageCode={languageCode}
+      header={data.header}
+      footer={data.footer}
+    >
+      <SiteMap
+        groups={groupPagesByTopic(data.page.nodes, languageCode)}
+        languageCode={languageCode}
+        siteMapPage={data.siteMapPage}
+      />
+    </LayoutRegional>
+  )
 }
 
 export const Head = ({ data, location, pageContext }) => (
@@ -59,7 +34,9 @@ export const Head = ({ data, location, pageContext }) => (
 
 export const pageQuery = graphql`
   query SiteMapRegionalQuery($languageCode: String, $pageID: String) {
-    siteMapPage: kontentItemPageTemplate(system: { id: { eq: $pageID } }) {
+    siteMapPage: kontentItemPageTemplate(
+      system: { id: { eq: $pageID }, language: { eq: $languageCode } }
+    ) {
       system {
         id
         codename

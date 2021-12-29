@@ -3,7 +3,7 @@ import AccordionItem from './Item'
 
 const AccordionBasic = ({ data = null }) => {
   const [isActive, setIsActive] = useState(null)
-  if (!data) return
+  if (!data) return null
   
   const {
     accordion_items: { value: accordion_items },

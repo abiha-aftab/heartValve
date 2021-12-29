@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link } from 'gatsby'
+import SiteLink from '../../../../components/SiteLink'
 import {
   ImageElement,
   RichTextElement,
@@ -40,7 +40,8 @@ const HeroLarge = ({ data }) => {
             } = anchor.elements
             const { id } = anchor.system
             return (
-              <Link
+              <SiteLink
+                key={id}
                 to={url}
                 aria-label={aria_label || name}
                 className="heroLarge__btn btn btn-blue"
@@ -51,7 +52,7 @@ const HeroLarge = ({ data }) => {
                 data-kontent-add-button-insert-position="after"
               >
                 {name}
-              </Link>
+              </SiteLink>
             )
           })}
         </div>

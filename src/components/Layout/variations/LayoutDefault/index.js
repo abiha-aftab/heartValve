@@ -9,7 +9,7 @@ import KontentSmartLink from '@kontent-ai/smart-link'
 const Layout = ({ children }) => {
   const data = useStaticQuery(graphql`
     query NavigationQuery {
-      header: kontentItemHeader {
+      header: kontentItemHeader(system: { language: { eq: "default" } }) {
         system {
           id
           codename
@@ -29,7 +29,7 @@ const Layout = ({ children }) => {
           }
         }
       }
-      footer: kontentItemFooter {
+      footer: kontentItemFooter(system: { language: { eq: "default" } }) {
         system {
           id
           codename
@@ -49,15 +49,13 @@ const Layout = ({ children }) => {
   `)
 
   useEffect(() => {
-    // This is just an example of SDK initialization inside ES6 module.
-    // HTML markup should still contain all necessary data-attributes (e.g. .layout element).
     const kontentSmartLink = KontentSmartLink.initialize({
       queryParam: 'enable-ksl-sdk',
     })
     return () => {
       kontentSmartLink.destroy()
     }
-  })
+  }, [])
 
   const navLogo = data.header.elements.logo
   const navLinks = prepareDataLinks(data.header.elements.menu.value)
