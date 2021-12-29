@@ -1,495 +1,160 @@
-# YourHeartValve README
+# YourHeartValve
 
-Documentation for YourHeartValve using Kentico Headless CMS 
+The website for YourHeartValve, a patient information resource from Edwards Lifesciences about heart valve disease and its treatment. It is a static Gatsby 5 site whose pages, menus and copy are managed in [Kontent.ai](https://kontent.ai), a headless CMS. Editors add a page in Kontent and the next build turns it into plain HTML. There is an English default site and regional language sites under `/<language>/` (for example `/de/`).
 
-## SCSS Folder Structure
+The repository also contains a set of local fixtures. They let the site build, run and be tested without any access to the Kontent project, which is how the screenshots below were made.
 
-Based upon [7-1 Sass architecture](https://www.learnhowtoprogram.com/user-interfaces/building-layouts-preprocessors/7-1-sass-architecture)
+| Home | Section page with an open FAQ |
+| --- | --- |
+| ![Home page on desktop](docs/screenshots/home-desktop.png) | ![Heart anatomy page with an expanded accordion](docs/screenshots/heart-anatomy-desktop.png) |
+
+| Mobile home | Mobile navigation | Disclaimer dialog |
+| --- | --- | --- |
+| ![Home page on a phone](docs/screenshots/home-mobile.png) | ![Mobile menu with the Treatment Options section open](docs/screenshots/navigation-mobile.png) | ![Disclaimer dialog on a phone](docs/screenshots/disclaimer-dialog-mobile.png) |
+
+| Site map | German regional site |
+| --- | --- |
+| ![Site map grouped by topic](docs/screenshots/site-map-desktop.png) | ![Regional page under /de/](docs/screenshots/regional-de-desktop.png) |
+
+All screenshots show fixture content, not production copy.
+
+## How it works
+
+```mermaid
+flowchart LR
+  subgraph source[Content source]
+    K[Kontent Delivery API]
+    F[fixtures/kontent<br/>KONTENT_OFFLINE=1]
+  end
+  K -->|items-feed, types| S["@kontent-ai/gatsby-source"]
+  F -->|axios adapter in plugins/kontent-offline| S
+  S --> G[(Gatsby GraphQL<br/>kontent_item_* nodes)]
+  G --> N[gatsby-node.js<br/>one page per page_template]
+  N --> T1[page-template / page-template-regional]
+  N --> T2[site-map-template / -regional]
+  G --> H[src/pages/index.js<br/>home_template]
+  T1 & T2 & H --> P[public/ static HTML]
+  P --> X[nginx container or any static host]
+```
+
+- **Content model.** Pages are `page_template` items with a title, slug, a "topics" taxonomy, an aside menu, rich-text body, accordions, a disclaimer modal, an optional Marketo form and an optional "jump to" dropdown. The home page is a `home_template` built from `section` items, which hold cards, anchors and images. The header and footer are single items per language holding menus.
+- **URLs.** A page lives at `/<topic>/<slug>`. It sits at `/<slug>` instead when it is the topic's landing page, has no topic, or is in the "Regional" topic. Regional sites prefix the language code, and a slug of `home` becomes the language root. Page creation and the site map share these rules in [`src/utils/pagePath.js`](src/utils/pagePath.js), so site-map links always match real pages.
+- **Languages.** Every language in `GATSBY_KONTENT_LANGUAGE_CODENAMES` is sourced. Pages whose `system.language` is not `default` use the regional templates and layout. Kontent's language fallback returns untranslated items once per language; those resolve to existing paths and are skipped.
+- **Preview.** The layouts carry Kontent Smart Link data attributes. Adding `?enable-ksl-sdk` to a URL turns on in-context editing links for editors.
+- **Head tags.** Titles, meta tags and the CMS-managed `head_scripts` are rendered with the Gatsby Head API, so they are in the server HTML.
+
+## Running it
+
+The site needs Node 22 (pinned in `.nvmrc` and `engines`).
+
+### Offline, from fixtures (no Kontent access needed)
+
+With Docker, this builds the site and serves it on http://localhost:8080:
+
+```sh
+docker build -t yourheartvalve .
+docker run --rm -p 8080:8080 yourheartvalve
+```
+
+With Node:
+
+```sh
+npm ci
+npm run develop:offline   # dev server on http://localhost:8000
+npm run build:offline     # static build in public/
+npm run serve             # serves public/ on http://localhost:9000
+```
+
+`KONTENT_OFFLINE=1` makes three changes:
+
+- It points the real source plugin at a reserved `kontent-fixtures.invalid` host.
+- It installs an axios adapter that answers the plugin's `/types` and `/items-feed` requests from [`fixtures/kontent/content.js`](fixtures/kontent/content.js). The fixtures use Delivery API shapes and include language fallback.
+- It leaves out the production consent-manager script.
+
+Any other request fails, so an offline build cannot reach a real Kontent project. The fixtures cover the default site and a small German site, `de`.
+
+### Against the real Kontent project
+
+```sh
+cp .env.example .env      # then fill in the project ID and languages
+npm ci
+npm run develop           # or: npm run build && npm run serve
+```
+
+| Variable | Purpose |
+| --- | --- |
+| `GATSBY_KONTENT_PROJECT_ID` | Kontent project (environment) ID. The build stops with a clear message if it is missing. |
+| `GATSBY_KONTENT_LANGUAGE_CODENAMES` | Comma-separated language codenames; the first is the default. Falls back to `default`. |
+| `GATSBY_DELIVERY_API_URL` | Base URL the browser uses to fetch the language list for the regional "Countries" menu. Without it the menu is hidden. |
+| `KONTENT_OFFLINE` | `1` builds from fixtures and ignores the variables above. |
+
+`GATSBY_*` values are inlined into the browser bundle, so never put an API key in a `GATSBY_` variable. The Docker image accepts the same values as build arguments:
+
+```sh
+docker build --build-arg KONTENT_OFFLINE= \
+  --build-arg GATSBY_KONTENT_PROJECT_ID=... \
+  --build-arg GATSBY_KONTENT_LANGUAGE_CODENAMES=default,de -t yourheartvalve .
+```
+
+## Scripts
+
+| Command | What it does |
+| --- | --- |
+| `npm run develop` / `develop:offline` | Gatsby dev server, against Kontent or the fixtures |
+| `npm run build` / `build:offline` | Static production build into `public/` |
+| `npm test` | Jest unit and component tests (no network, no CMS) |
+| `npm run lint` | ESLint (react, hooks, jsx-a11y; zero warnings) and Prettier check |
+| `npm run format` | Apply Prettier |
+
+## Tests
+
+`npm test` runs 43 Jest tests with Testing Library and `babel-preset-gatsby`. They cover:
+
+- **URL rules.** Path building, site-map grouping (including that it no longer mutates query data), menu and sidebar link preparation for default and regional sites, and external-link handling.
+- **Configuration.** Environment parsing, including the unset language list that used to crash `gatsby-config`.
+- **Offline adapter.** It refuses real hosts, applies language fallback, and every linked item in the fixtures resolves.
+- **Accessible behaviour.** The navbar toggle and section menus (Escape, focus return, links not nested in buttons), accordion button and region wiring, dialog focus handling, breadcrumb `aria-current`, and the site map without a CMS page.
+
+The offline production build is the integration check: it runs every page query against the fixtures through the real source plugin.
+
+What is **not** verified here is the live Kontent path: the real content model, real rich text, the Marketo form and the CMS-managed head scripts. The fixtures were written to match the site's GraphQL queries, not exported from the production project.
+
+## Project layout
 
 ```text
-scss/
-|
-|– abstracts/
-|   |– _variables.scss    # Sass Variables
-|   |– _mixins.scss       # Sass Mixins
-|
-|– vendors/
-|   |– _bootstrap.scss    # Bootstrap
-|
-|– base/
-|   |– _reset.scss        # Reset/normalize
-|   |– _typography.scss   # Typography rules
-|
-|– layout/
-|   |– _navigation.scss   # Navigation
-|   |– _grid.scss         # Grid system
-|   |– _header.scss       # Header
-|   |– _footer.scss       # Footer
-|   |– _sidebar.scss      # Sidebar
-|   |– _forms.scss        # Forms
-|
-|– components/
-|   |– _buttons.scss      # Buttons
-|   |– _carousel.scss     # Carousel
-|   |– _cover.scss        # Cover
-|   |– _dropdown.scss     # Dropdown
-|
-|– pages/
-|   |– _home.scss         # Home specific styles
-|   |– _contact.scss      # Contact specific styles
-|
-|– themes/
-|   |– _theme.scss        # Default theme
-|   |– _admin.scss        # Admin theme
-|
- – main.scss              # Main Sass input file
+config/kontent.js            env -> source plugin options (offline mode, language parsing)
+fixtures/kontent/            offline content: types, items, small SVG icons
+plugins/kontent-offline/     local Gatsby plugin: fixture axios adapter + asset copy
+gatsby-node.js               creates one page per page_template, plus site maps
+src/pages/                   home (home_template) and 404
+src/templates/               page and site-map templates, default and regional
+src/components/              reusable pieces (Accordion, Modal, SiteLink, RichText, SEO, ...)
+src/containers/              page sections (Navbar, Hero, Features, Contents, Footer)
+src/utils/                   URL rules, menu preparation, script extraction
+src/assets/scss/             7-1 Sass structure, BEM class names
+test/, __mocks__/            Jest tests and Gatsby's documented module mock
+docker/nginx.conf            non-root nginx config used by the Dockerfile
+scripts/                     screenshot capture
 ```
 
-1. **`abstracts`** contains no actual styles, just Sass mechanisms that help define styles in other directories (sometimes called "helpers"). This includes things like global variables, functions, and mixins. Each of these categories should be placed in their own appropriately-named partial file, as seen above.
-
-2. **`vendors`** contains any third-party stylesheets a project uses. For instance, if we wanted to use Bootstrap alongside our own custom Sass in a project, we'd download the Bootstrap stylesheet and place it here.
-
-3. **`base`** contains boilerplate used throughout an entire si te. This includes project-wide typography styles, and stylesheets that universally reset or normalize default CSS.
-
-4. **`layout`** contains styles for different aspects of the site's structural layout (think of areas like nav bars, headers, footers, etc.)
-
-5. **`components`** are like "mini" layouts. Styles for small, reusable pieces of the site should reside here (think buttons, forms, profile pictures, etc.)
-
-6. **`pages`** is where page-specific styles reside. For instance, if a project contained several style rules that are only ever used on the "Contact Us" page, they'd live here in a \_contact.scss file, as seen above.
-
-7. **`themes`** is used whenever a site has multiple themes. For instance, the example project above includes both admin and default themes. We can therefore assume this example site is styled entirely differently for logged-in admins. Perhaps to better present and accommodate the additional features an Admin has. Some websites also offer a "night mode", where the background of the site is darker with lighter-colored text for easier reading in low-light environments. An option like this would be represented in its own theme file too.
-
-## 🤓 BEM (Block Element Modifier) CSS Methodology
-
-**`BEM`**: BEM (Block. Element. Modifier) is a naming methodology, which aims to solve many of the problems you’ll commonly encounter when naming classes and structuring your CSS. It also does a great job of enabling you to create reusable front end components, which is something we all strive for: to be healthy, wealthy and create reusable components.
-
-**`Block`**: Standalone entity that is meaningful on its own.
-
-**`Element`**: A part of a block that has no standalone meaning and is semantically tied to its block.
-
-**`Modifier`**: A flag on a block or element. Use them to change appearance or behavior.
-
-1.  **CSS**
-
-    ```shell
-      .card {
-         &__title: {
-            font-size: 1rem;
-         }
-         &__description {
-            color: #000000;
-            &--primary {
-               color: #c8102e;
-            }
-         }
-      }
-    ```
-
-2.  **HTML**
-
-    ```shell
-      <div class="card">
-         <div class="card__title">Hello World</div>
-         <div class="card__description card__description--primary">Lorem ipsum dolor sit amet consectetur adipisicing elit.</div>
-      </div>
-    ```
-
-## 🗃️ Containers vs. Components
-
-When organzing UI Elements they can be grouped into two different folders
-
-1. **`Components`**: Smaller UI Elements that can be nested inside of a **Container**. For example Cards, Accordions, Pagination, Sidebar
-2. **`Containers`**: Sections of content that can contain multiple **Components** or just have groupings of content. For example Navbar, Hero, Features (Intro Heading + Looping through an array of Card components).
-
-## Steps to creating a new component or container
-
-When creating a new component thinking in terms of scalability we need to create a variants folder that will house all variations of component. Even if there is only one variation we need to think in terms of possibility of there being different versions in future.
-
-**JavaScript Folder structure**
-
-```text
-.
-└── Components
-   └── Card
-      ├── index.js
-      └── variants
-         └── CardBasic
-            └── index.js
-
-
-```
-
-**SCSS Folder Structure**
-
-```text
-.
-└── scss
-   └── components
-      └── card
-         ├── _cardBasic.scss
-         └── _index.scss
-
-```
-
-**main.scss** `./src/assets/scss/main.scss`
-
-```css
-@import './abstracts/functions';
-@import './abstracts/variables';
-@import './abstracts/mixins';
-
-@import './base/reset';
-@import './base/typography';
-@import './base/utilities';
-
-@import './layouts/navbar';
-@import './layouts/footer';
-
-@import './components/button';
-@import './components/hero';
-@import './components/card';
-@import './components/pagination';
-@import './components/sidebar';
-```
-
-**Component Specific Folder** `./src/assets/scss/components/hero/_index.scss`
-
-```css
-@import './heroLarge';
-@import './heroSmall';
-```
-
-**Component Variant** `./src/assets/scss/components/hero/_heroSmall.scss`
-
-```css
-.heroSmall {
-  height: 8rem;
-  width: 100%;
-  object-fit: cover;
-  object-position: center;
-  @include md {
-    height: 14rem;
-  }
-}
-```
-
-**Naming Convention**
-
-[Root Component Folder Name][simple descriptive keyword]
-
-Example: `CardBasic`, `HeroLarge`, `NavbarDefault`
-
-**index.js**
-
-```javascript
-import React from 'react'
-import CardBasic from './variants/CardBasic'
-
-const Card = ({ data }) => {
-  switch (data.variant) {
-    case 'Basic':
-      return <CardBasic data={data} />
-  }
-}
-
-export default Card
-```
-
-**CardBasic.js**
-
-```javascript
-import React from 'react'
-
-const CardBasic = ({ data }) => {
-  if (!data) {
-    return null
-  }
-  const { title, icon, description, cta_link, cta_text } = data
-  return (
-    <article className="cardBasic">
-      <h3 className="cardBasic__title">{title}</h3>
-      <div className="cardBasic__icon">{icon}</div>
-      <p className="cardBasic__description">{description}</p>
-      <a href={cta_link} className="btn btn-blue cardBasic__cta">
-        {cta_text}
-      </a>
-    </article>
-  )
-}
-
-export default CardBasic
-```
-
-**Usage in page template**
-
-```javascript
-import React from 'react'
-import { cardLinks } from '../../assets/data/links'
-import CardBasic from '../../components/Card/variants/CardBasic'
-
-const Features = () => {
-  return (
-    <div className="section">
-      <div className="container-sm">
-        <p className="text-center lead">
-          A patient information resource from Edwards Lifesciences, the leader
-          in heart valve therapy
-        </p>
-        <div className="grid-md-2 gap-1 gap-md-2">
-          {cardLinks.map((card) => {
-            return <CardBasic data={card} />
-          })}
-        </div>
-      </div>
-    </div>
-  )
-}
-
-export default Features
-```
-
-## REM Units
-
-**`base rem value`**: 16px
-
-Utilize `rem` units in css instead of `px`
-
-## ⚙️ SCSS Variables
-
-`./src/assets/scss/abstracts/variables`
-
-Instead of writing hardcoded values for css properties utilizing pre existing variables should used Instead.
-
-If you find yourself rewriting same code over again add to the variables file.
-
-### ✅ Good
-
-```css
-h2 {
-  font-size: $font-size-h2;
-  line-height: line-height($font-size-h2);
-  font-weight: $font-weight-light;
-  color: $color-crimson;
-  margin-bottom: $spacer;
-  color: $color-black;
-}
-```
-
-### 🚫 Bad
-
-```css
-h2 {
-  font-size: 15px;
-  line-height: 2.31px;
-  font-weight: bold;
-  color: #c8102e;
-  margin-bottom: 23.4rem;
-  color: #000;
-}
-```
-
-## 🖌️ Color Reference
-
-| Color                                                                   | Hex     |
-| ----------------------------------------------------------------------- | ------- |
-| ![#c8102e](https://via.placeholder.com/10/c8102e?text=+) $color-crimson | #c8102e |
-| ![#505759](https://via.placeholder.com/10/505759?text=+) $color-slate   | #505759 |
-| ![#dfdfdf](https://via.placeholder.com/10/dfdfdf?text=+) $color-slate-1 | #DFDFDF |
-| ![#edeeee](https://via.placeholder.com/10/edeeee?text=+) $color-slate-2 | #EDEEEE |
-| ![#000000](https://via.placeholder.com/10/000000?text=+) $color-black   | #000000 |
-| ![#FFFFFF](https://via.placeholder.com/10/FFFFFF?text=+) $color-white   | #FFFFFF |
-| ![#8ba9bd](https://via.placeholder.com/10/8ba9bd?text=+) $color-blue     | #356584 |
-
-## Breakpoints
-
-Using a min-width breakpoint system
-
-| Breakpoints | Size   |
-| ----------- | ------ |
-| default     | 0px    |
-| md          | 768px  |
-| lg          | 1024px |
-
-### Using breakpoint mixins with css
-
-The below code will generate styling for `h2` element with red color until it reaches medium screens and becomes blue.
-
-```css
-h2 {
-  color: red;
-  @include md {
-    color: blue;
-  }
-}
-```
-
-## Grid System
-
-Utilizes CSS Grid to create utility classes for easy usage.
-
-_Using these utility classes isn't necessary in markup if you just want to write your own styles in corresponding partial sass file for component_
-
-`./src/assets/scss/base/_utilities.scss`
-
-### Two Column Layout
-
-```html
-<div className="grid-md-2">
-  <Card />
-  <Card />
-</div>
-```
-
-### Two Column Layout (mobile) + 4 Column Layout (desktop)
-
-```html
-<div className="grid-2 grid-md-4">
-  <Card />
-  <Card />
-  <Card />
-  <Card />
-</div>
-```
-
-### Gap
-
-By default the gap creating using grid is `2rem`
-
-In order to adjust the size of the gap use `grid-number` convention
-
-the `number` used above for class will correlate to how many `rems` of gap you will have
-
-**Example**
-
-The below code will generate a layout with `3rems` of spacing between elements for mobile and `2rems` of spacing between elements for desktop
-
-```html
-<div className="grid-3 gap-3 gap-md-2">
-  <Card />
-  <Card />
-  <Card />
-</div>
-```
-
-### Ordering
-
-The below code will order the `hello world` text on mobile below the `img` and on the left side in desktop
-
-```html
-<div className="container grid-1 grid-md-2">
-  <div className="order-2 order-md-1">
-    <p>hello world</p>
-  </div>
-  <div className="order-1 order-md-2">
-    <img src="#" alt="sample image" />
-  </div>
-</div>
-```
-
-### Custom Column Sizes
-
-In order to achieve a explicit column layout for instance `4 + 8` we need to first set the grid template columns to 12 `grid-md-12`
-
-**`col-md-4`**: sets the `grid-column` span to 4
-
-**`col-md-8`**: sets the `grid-column` span to 8
-
-```html
-<div className="grid-1 grid-md-12 gap-1 gap-md-2">
-  <div className="col-md-4">
-    <Sidebar />
-  </div>
-  <div className="col-md-8">
-    <h3>Hello world</h3>
-    <p>
-      Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit nobis
-      molestias reprehenderit nostrum reiciendis. Voluptate excepturi reiciendis
-      repellat eaque sit libero ad facere adipisci molestiae? Sint non
-      aspernatur eveniet quibusdam!
-    </p>
-  </div>
-</div>
-```
-
-## Generating Custom Utility Classes
-
-`./src/assets/scss/base/_utilities.scss`
-
-When needed, custom utilities can be added to the below $utilities map.
-
-```css
-$utilities: (
-  'text-align': (
-    'prefix': 'text',
-    'values': (
-      'center': center,
-    ),
-  ),
-  'margin-top': (
-    'prefix': 'mt',
-    'values': (
-      '0': 0,
-      '1': 1rem,
-      '2': 2rem,
-      '3': 3rem,
-      '4': 4rem,
-      '5': 5rem,
-    ),
-  ),
-);
-
-@each $property, $map in $utilities {
-  $prefix: map-get($map, 'prefix');
-  $values: map-get($map, 'values');
-
-  @each $k, $v in $values {
-    .#{$prefix}-#{$k} {
-      #{$property}: $v;
-    }
-    @include md {
-      .#{$prefix}-md-#{$k} {
-        #{$property}: $v;
-      }
-    }
-  }
-}
-```
-
-**Adding a Margin Left utility Example**
-
-```css
-$utilities: (
-  'text-align': (
-    'prefix': 'text',
-    'values': (
-      'center': center
-    )
-  ),
-  'margin-top': (
-    'prefix': 'mt',
-    'values': (
-      '0': 0,
-      '1': 1rem,
-      '2': 2rem,
-      '3': 3rem,
-      '4': 4rem,
-      '5': 5rem
-    )
-  ),
-  'margin-left': (
-    'prefix': 'ml',
-    'values': (
-      '0': 0,
-      '1': 1rem,
-      '2': 2rem,
-      '3': 3rem,
-      '4': 4rem,
-      '5': 5rem
-    )
-  )
-);
-```
-
-Will generate classes `ml-0` through `ml-5`
-
-*Sample text for dev PR*
+## Design notes
+
+- **Component variants.** Components and containers keep the original convention: each lives in `<Name>/variants/<Name><Variant>/`, named for example `HeroLarge` or `CardBasic`. Default and regional sites share a single navbar; regional sites pass their home path and language list.
+- **Styles.** Styles follow the 7-1 Sass layout under `src/assets/scss` (abstracts, base, layouts, components) with BEM class names. Use the variables in `abstracts/_variables.scss` rather than hard-coded values. Breakpoints are min-width: `md` at 768px and `lg` at 1024px, used through `@include md { ... }`. Grid helpers (`grid-md-2`, `col-md-9`, `gap-2`, `order-md-1`) and spacing utilities (`mt-2`) are generated in `base/_utilities.scss`.
+- **Brand palette.** The palette is crimson `#c8102e`, slate `#505759` and blue `#356584` on white and light greys, set in Merriweather Sans. Footer links use `#e0e2e2` on slate, about 5.7:1, for contrast.
+- **Accessibility.** The site has a skip link, a `<main>` landmark and one `<h1>` per page. Breadcrumbs are a labelled `<nav>`. Menus, the sidebar, accordions and the dialog expose their state with `aria-expanded`, `aria-controls` and labelled regions, and the dialog manages focus. Animations follow the reduced-motion preference.
+- **Links.** `SiteLink` sends internal routes through Gatsby's `Link` and opens absolute URLs in a new tab with `rel="noopener noreferrer"`.
+
+## Dependencies and known limitations
+
+- **Kontent's Gatsby packages are no longer maintained.** `@kontent-ai/gatsby-source` 10.0.1 and `@kontent-ai/gatsby-components` 10.0.0 are the renamed successors of `@kentico/gatsby-source-kontent` and `@kentico/gatsby-kontent-components`. They have the same publisher and repository, and the old names point to them. npm now marks both as "no longer supported", and these are their final releases. They work with Gatsby 5, but a long-term move would be to source content with `@kontent-ai/delivery-sdk` directly.
+- **Patched axios.** The source plugin's own `axios` is overridden to the patched 0.34 line in `package.json`.
+- **Undeclared Smart Link dependency.** `@kontent-ai/smart-link` 5 imports `@kontent-ai/delivery-sdk` at runtime without declaring it, so it is listed explicitly.
+- **Remaining advisories.** `npm audit` reports 78 advisories (0 critical, 33 high). The highs come from Gatsby 5's own build toolchain (graphql-codegen, sharp/libvips, webpack-dev-middleware and similar) and have no fix within Gatsby 5. They affect the build machine, not the static output. The moderates are mostly Jest's dev tooling.
+- **Sass deprecations are silenced.** The Sass partials still use `@import` and global colour functions, and `gatsby-plugin-sass` uses Sass's legacy JS API. Those deprecation warnings are silenced in `gatsby-config.js`; moving the partials to `@use` is the remaining step.
+- **Language list.** The regional language list is fetched in the browser from the Delivery API, as before, rather than sourced at build time.
+- **Head scripts on regional sites.** Head scripts come from the default-language header for every page, because Gatsby static queries cannot take a language. The old `body_scripts` no-JS fallback was never rendered correctly, and it is not rendered now.
+
+## License
+
+MIT. `LICENSE` is the original notice from the Kentico starter this site was built on ("Copyright (c) 2020 Kentico") and is kept as it is. YourHeartValve and Edwards Lifesciences names, copy and imagery belong to their owners.
