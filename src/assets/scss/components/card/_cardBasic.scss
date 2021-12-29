@@ -1,0 +1,15 @@
+.cardBasic {
+  padding: 2rem;
+  border: 1px solid $color-slate-1;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  &__icon {
+    margin-bottom: $spacer;
+  }
+  &__cta {
+    margin-top: auto;
+    align-self: center;
+  }
+}

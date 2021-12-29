@@ -1,0 +1,133 @@
+@use "sass:math";
+
+/* === Layout === */
+
+.container {
+  @include container;
+}
+
+.container-sm {
+  @include container;
+  max-width: math.div($max-width-container, 1.15);
+}
+
+.section {
+  $size: 5rem;
+  padding: math.div($size, 2) 0;
+  @include md {
+    // padding: $size 0;
+    padding: 2rem 0;
+  }
+}
+
+/* === Grid === */
+
+$columns: 12;
+
+@for $i from 1 through $columns {
+  .grid-#{$i} {
+    display: grid;
+    gap: $spacer * 2;
+    grid-template-columns: repeat(#{$i}, 1fr);
+  }
+  @include md {
+    .grid-md-#{$i} {
+      display: grid;
+      gap: $spacer * 2;
+      grid-template-columns: repeat(#{$i}, 1fr);
+    }
+  }
+  .col-#{$i} {
+    grid-column: span #{$i};
+  }
+  @include md {
+    .col-md-#{$i} {
+      grid-column: span #{$i};
+    }
+  }
+}
+
+$gap: 6;
+
+@for $i from 1 through $gap {
+  .gap-#{$i} {
+    display: grid;
+    gap: #{$i}rem;
+  }
+  @include md {
+    .gap-md-#{$i} {
+      display: grid;
+      gap: #{$i}rem;
+    }
+  }
+}
+
+$order: 2;
+
+@for $i from 1 through $order {
+  .order-#{$i} {
+    order: #{$i};
+  }
+  @include md {
+    .order-md-#{$i} {
+      order: #{$i};
+    }
+  }
+}
+
+/* === Colors === */
+
+@each $key, $val in $colors {
+  .text-#{$key} {
+    color: #{$val};
+  }
+  .bg-#{$key} {
+    background: #{$val};
+    color: contrast($val);
+  }
+}
+
+/* === Utilities === */
+
+$utilities: (
+  "text-align": (
+    "prefix": "text",
+    "values": (
+      "center": center,
+    ),
+  ),
+  "margin-top": (
+    "prefix": "mt",
+    "values": (
+      "0": 0,
+      "1": 1rem,
+      "2": 2rem,
+      "3": 3rem,
+      "4": 4rem,
+      "5": 5rem,
+    ),
+  ),
+  "max-width": (
+    "prefix": "mw",
+    "values": (
+      "auto": auto,
+      "25": 25rem,
+    ),
+  ),
+);
+
+@each $property, $map in $utilities {
+  $prefix: map-get($map, "prefix");
+  $values: map-get($map, "values");
+
+  @each $k, $v in $values {
+    .#{$prefix}-#{$k} {
+      #{$property}: $v;
+    }
+    @include md {
+      .#{$prefix}-md-#{$k} {
+        #{$property}: $v;
+      }
+    }
+  }
+}

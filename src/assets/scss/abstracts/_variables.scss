@@ -1,0 +1,68 @@
+/* === Typography === */
+@import url('https://fonts.googleapis.com/css2?family=Merriweather+Sans:wght@300;400;500;600;700;800&display=swap');
+
+$font-family-base: 'Merriweather Sans', sans-serif;
+
+$font-size-base: 1rem;
+$font-size-h1: $font-size-base * 3;
+$font-size-h2: $font-size-base * 2;
+$font-size-h3: $font-size-base * 1.75;
+$font-size-h4: $font-size-base * 1.25;
+$font-size-lead: $font-size-base * 1.25;
+$font-size-small: $font-size-base * 0.875;
+
+$font-weight-lightest: 100;
+$font-weight-light: 200;
+$font-weight-normal: 400;
+$font-weight-bold: 700;
+
+/* === Line height === */
+
+$line-height-list: 2rem;
+
+/* === Colors === */
+
+$color-crimson: #c8102e;
+$color-slate: #505759;
+$color-slate-1: #dfdfdf;
+$color-slate-2: #edeeee;
+$color-slate-3: #b8b8b9;
+$color-black: #000000;
+$color-white: #ffffff;
+$color-blue: #356584;
+$color-grey: #edeeee;
+$color-grey-2: #b8b8b9;
+$color-grey-3: #e0e2e2;
+$color-focus: #0099ff;
+
+$colors: (
+  'crimson': $color-crimson,
+  'slate': $color-slate,
+  'slate-2': $color-slate-2,
+  'blue': $color-blue,
+  'white': $color-white,
+  'black': $color-black,
+);
+
+/* === Breakpoints === */
+
+$breakpoints: (
+  'md': 768px,
+  'lg': 1024px,
+);
+
+/* === Layout === */
+
+$max-width-container: 1140px;
+
+/* === Spacing === */
+
+$spacer: 1rem;
+
+/* === Buttons === */
+
+$btn-hover-amount: 4%;
+
+/* === Transitions === */
+
+$transition-default: 0.2s all;

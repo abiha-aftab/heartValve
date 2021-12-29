@@ -1,0 +1,35 @@
+@use 'sass:math';
+
+/* === Breakpoints === */
+
+@mixin md {
+  @media (min-width: map-get($breakpoints, 'md')) {
+    @content;
+  }
+}
+
+@mixin lg {
+  @media (min-width: map-get($breakpoints, 'lg')) {
+    @content;
+  }
+}
+
+/* === Layout === */
+
+@mixin container {
+  max-width: $max-width-container;
+  margin: 0 auto;
+  width: 100%;
+  padding: 0 $spacer;
+}
+
+
+/* === Focus States === */
+
+@mixin focus {
+  &:focus-visible {
+    outline: 2px solid $color-white;
+    box-shadow: 0px 0px 0px 4px $color-focus;
+    outline-offset: 0px;
+  }
+}

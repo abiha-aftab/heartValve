@@ -1,0 +1,11 @@
+.site-map-grid {
+  li {
+    a {
+      text-decoration: none;
+      line-height: 2;
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}

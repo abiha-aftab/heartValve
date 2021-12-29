@@ -1,0 +1,19 @@
+/* Typography */
+
+@function line-height($value) {
+  @if ($value >= 1.5rem) {
+    @return $value * 1.25;
+  } @else {
+    @return $value * 2;
+  }
+}
+
+/* Color */
+
+@function contrast($value) {
+  @if (lightness($value) > 70) {
+    @return $color-slate;
+  } @else {
+    @return $color-white;
+  }
+}

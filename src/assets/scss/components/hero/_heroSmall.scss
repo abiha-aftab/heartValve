@@ -1,0 +1,9 @@
+.heroSmall {
+  height: 8rem;
+  width: 100%;
+  object-fit: cover;
+  object-position: center;
+  @include md {
+    height: 14rem;
+  }
+}
