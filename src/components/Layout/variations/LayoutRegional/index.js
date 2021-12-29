@@ -9,21 +9,27 @@ const LayoutRegional = ({ children, languageCode, header, footer }) => {
   const [languages, setLanguages] = useState([])
 
   useEffect(() => {
-    if (!languages.length) {
-      fetch(
-        `${process.env.GATSBY_DELIVERY_API_URL}${process.env.GATSBY_KONTENT_PROJECT_ID}/languages`
-      )
-        .then((response) => response.json())
-        .then((results) => {
-          const tmp = []
-          results.languages?.forEach((language) => {
-            const { codename, name } = language.system
-            if (codename !== 'default')
-              tmp.push({ name: name, url: `/${codename}` })
-          })
-          setLanguages(tmp)
+    const deliveryApiUrl = process.env.GATSBY_DELIVERY_API_URL
+    const projectId = process.env.GATSBY_KONTENT_PROJECT_ID
+    // Offline builds have neither, and the selector is simply not shown.
+    if (languages.length || !deliveryApiUrl || !projectId) return
+    fetch(`${deliveryApiUrl}${projectId}/languages`)
+      .then((response) => {
+        if (!response.ok) throw new Error(`HTTP ${response.status}`)
+        return response.json()
+      })
+      .then((results) => {
+        const tmp = []
+        results.languages?.forEach((language) => {
+          const { codename, name } = language.system
+          if (codename !== 'default')
+            tmp.push({ name: name, url: `/${codename}` })
         })
-    }
+        setLanguages(tmp)
+      })
+      .catch((error) => {
+        console.warn('Could not load the language list from Kontent', error)
+      })
   }, [])
 
   useEffect(() => {

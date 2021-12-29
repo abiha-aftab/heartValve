@@ -1,0 +1,7 @@
+{
+  "name": "kontent-offline",
+  "version": "1.0.0",
+  "description": "Serves the Kontent source plugin from local fixtures when KONTENT_OFFLINE=1",
+  "private": true,
+  "main": "index.js"
+}
