@@ -22,10 +22,8 @@ h2 {
   font-size: $font-size-h2;
   line-height: line-height($font-size-h2);
   font-weight: $font-weight-light;
-  color: $color-crimson;
   margin-bottom: $spacer;
   color: $color-slate;
-  text-transform: capitalize;
 }
 
 h3 {
@@ -81,15 +79,6 @@ tr {
   margin-bottom: 0;
 }
 
-.category {
-  a {
-    text-decoration: none;
-    &:hover {
-      color: $color-blue;
-      text-decoration: underline;
-    }
-  }
-}
 .contentDefault h2 {
   text-transform: none;
 }
@@ -122,4 +111,32 @@ button {
   line-height: line-height($font-size-base);
   cursor: pointer;
   @include focus;
+}
+
+.pageHeading {
+  margin-bottom: $spacer;
+  &__category {
+    margin-bottom: 0.25rem;
+    font-size: $font-size-small;
+    font-weight: $font-weight-bold;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    a {
+      text-decoration: none;
+      &:hover {
+        color: $color-blue;
+        text-decoration: underline;
+      }
+    }
+  }
+  &__title {
+    font-size: $font-size-h2;
+    line-height: line-height($font-size-h2);
+    color: $color-crimson;
+    margin-bottom: 0.5rem;
+    @include md {
+      font-size: $font-size-h2 * 1.25;
+      line-height: line-height($font-size-h2 * 1.25);
+    }
+  }
 }

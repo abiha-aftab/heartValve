@@ -14,12 +14,8 @@ const HeroLarge = ({ data }) => {
     },
   } = data.elements
   const { id, codename } = data.system
-  const {
-    alt: { value: image_alt },
-    asset: {
-      value: [image_asset],
-    },
-  } = image.elements
+  const image_alt = image?.elements.alt.value || ''
+  const image_asset = image?.elements.asset.value[0]
 
   return (
     <section className="heroLarge" data-kontent-item-id={id}>
@@ -54,11 +50,13 @@ const HeroLarge = ({ data }) => {
           })}
         </div>
       </div>
-      <ImageElement
-        image={image_asset}
-        className="heroLarge__image"
-        alt={image_alt || 'Patient in snow'}
-      />
+      {image_asset && (
+        <ImageElement
+          image={image_asset}
+          className="heroLarge__image"
+          alt={image_alt}
+        />
+      )}
     </section>
   )
 }

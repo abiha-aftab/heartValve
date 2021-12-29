@@ -33,7 +33,7 @@
     border-bottom: 1px solid $color-slate-1;
   }
   &__item {
-    word-break: break-all;
+    overflow-wrap: anywhere;
     &--headline {
       background-color: $color-grey;
       @extend %sidebarItem;

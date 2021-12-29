@@ -8,6 +8,7 @@ import { prepareSidebarLinks } from '../utils/prepareSidebarLinks'
 import Dropdown from '../components/Dropdown/variants/DropdownDefault'
 import LayoutRegional from '../components/Layout/variations/LayoutRegional'
 import SEO from '../components/SEO'
+import PageHeading from '../components/PageHeading'
 import { prepareDataLinks } from '../utils/prepareDataLinks'
 
 export default function PageTemplateRegional({
@@ -23,48 +24,36 @@ export default function PageTemplateRegional({
     modal: { value: modal },
     marketo_form: { value: marketo_form },
     dropdown: { value: dropdown },
+    title: { value: title },
   } = data.page.elements
   const { id, codename } = data.page.system
   const sidebarLinks = prepareSidebarLinks(menu, languageCode)
-  let footerLinksTranslations = []
-  let titleMapping = []
-  if (data.footer) {
-    footerLinksTranslations = prepareDataLinks(
-      data.footer.elements.menu.value,
-      languageCode,
-      'footer'
-    )
-    titleMapping = footerLinksTranslations.filter(function (page) {
-      return page.url === `/${languageCode}/${item.categorySlug}`
-    })
-  }
-
-  let categoryPath = path.split('/')
-  categoryPath[1] = `/${categoryPath[0]}/${categoryPath[1]}`
+  const footerLinksTranslations = data.footer
+    ? prepareDataLinks(data.footer.elements.menu.value, languageCode, 'footer')
+    : []
+  const categoryUrl = `/${languageCode}/${item.categorySlug}`
+  // Regional sites name sections through their footer links, when present.
+  const categoryName =
+    item.category.toLowerCase() === 'regional'
+      ? null
+      : footerLinksTranslations.find((link) => link.url === categoryUrl)
+          ?.name || item.category
   return (
     <LayoutRegional
       languageCode={languageCode}
       header={data.header}
       footer={data.footer}
     >
-      <HeroSmall image={image.value ? image.value[0] : null} />
+      <HeroSmall image={image.value[0] || null} />
       <section className="section">
         <div className="container">
-          {item.pageSlug !== '' && (
-            <h2
-              className="text-crimson category"
-              data-kontent-item-id={id}
-              data-kontent-element-codename={codename}
-            >
-              <a href={categoryPath[1]}>
-                {item.category.toLowerCase() === 'regional'
-                  ? item.name
-                  : titleMapping.length > 0
-                    ? titleMapping[0].name
-                    : item.category}
-              </a>
-            </h2>
-          )}
+          <PageHeading
+            title={title}
+            category={categoryName}
+            categoryUrl={categoryUrl}
+            itemId={id}
+            codename={codename}
+          />
           <PaginationDefault
             path={path}
             languageCode={languageCode}

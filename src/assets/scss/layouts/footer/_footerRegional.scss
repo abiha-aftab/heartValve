@@ -38,9 +38,10 @@
   }
   &__footer-text {
     p {
-      font-size: 0.8rem;
+      font-size: $font-size-small;
+      line-height: 1.6;
       color: $color-white;
-      margin-bottom: 0;
+      margin-bottom: 0.5rem;
     }
   }
 }

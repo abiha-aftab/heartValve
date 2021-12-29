@@ -7,6 +7,7 @@ import ContentsPageTemplate from '../containers/Contents/variants/ContentsPageTe
 import { prepareSidebarLinks } from '../utils/prepareSidebarLinks'
 import Dropdown from '../components/Dropdown/variants/DropdownDefault'
 import SEO from '../components/SEO'
+import PageHeading from '../components/PageHeading'
 import Layout from '../components/Layout/variations/LayoutDefault'
 
 export default function PageTemplate({ pageContext: { item }, data }) {
@@ -19,24 +20,23 @@ export default function PageTemplate({ pageContext: { item }, data }) {
     modal: { value: modal },
     marketo_form: { value: marketo_form },
     dropdown: { value: dropdown },
+    title: { value: title },
   } = data.page.elements
   const { id, codename } = data.page.system
   const sidebarLinks = prepareSidebarLinks(menu)
 
-  let categoryPath = path.split('/')
-  categoryPath[0] = `/${categoryPath[0]}`
   return (
     <Layout>
-      <HeroSmall image={image.value ? image.value[0] : null} />
+      <HeroSmall image={image.value[0] || null} />
       <section className="section">
         <div className="container">
-          <h2
-            className="text-crimson category"
-            data-kontent-item-id={id}
-            data-kontent-element-codename={codename}
-          >
-            <a href={categoryPath[0]}>{item.category}</a>
-          </h2>
+          <PageHeading
+            title={title}
+            category={item.category}
+            categoryUrl={`/${item.categorySlug}`}
+            itemId={id}
+            codename={codename}
+          />
           <PaginationDefault path={path} pageId={id} pageCodename={codename} />
           <div className="grid-1 grid-md-12 mt-2 gap-1 gap-md-2">
             {sidebarLinks && (

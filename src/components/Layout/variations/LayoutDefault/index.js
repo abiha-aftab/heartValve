@@ -5,6 +5,7 @@ import NavbarDefault from '../../../../containers/Navbar/variants/NavbarDefault'
 import { useStaticQuery, graphql } from 'gatsby'
 import { prepareDataLinks } from '../../../../utils/prepareDataLinks'
 import KontentSmartLink from '@kontent-ai/smart-link'
+import { MotionConfig } from 'framer-motion'
 
 const Layout = ({ children }) => {
   const data = useStaticQuery(graphql`
@@ -66,13 +67,16 @@ const Layout = ({ children }) => {
     <div
       className="layout"
       data-kontent-environment-id={process.env.GATSBY_KONTENT_PROJECT_ID}
-      data-kontent-language-codename={
-        process.env.GATSBY_KONTENT_LANGUAGE_CODENAMES
-      }
+      data-kontent-language-codename="default"
     >
-      <NavbarDefault navLogo={navLogo} navLinks={navLinks} />
-      {children}
-      <FooterDefault footerLinks={footerLinks} footerText={footerText} />
+      <MotionConfig reducedMotion="user">
+        <a className="skip-link" href="#main">
+          Skip to content
+        </a>
+        <NavbarDefault navLogo={navLogo} navLinks={navLinks} />
+        <main id="main">{children}</main>
+        <FooterDefault footerLinks={footerLinks} footerText={footerText} />
+      </MotionConfig>
     </div>
   )
 }

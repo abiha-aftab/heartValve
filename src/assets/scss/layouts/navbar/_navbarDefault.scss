@@ -23,13 +23,30 @@
       width: auto;
     }
   }
+  &__brand {
+    text-decoration: none;
+  }
   &__logo {
-    font-size: $font-size-h2;
+    display: block;
+    max-height: 2.5rem;
+  }
+  // Text wordmark used when the CMS has no logo. An <img> SVG cannot load
+  // the web font, so the old fallback rendered in a serif face.
+  &__wordmark {
+    font-size: 1.75rem;
+    font-weight: $font-weight-normal;
+    color: $color-black;
+    letter-spacing: -0.01em;
+    span {
+      color: $color-crimson;
+    }
   }
   &__toggle {
     display: flex;
     align-items: center;
     justify-content: center;
+    min-width: 2.75rem;
+    min-height: 2.75rem;
     padding: 0.25rem;
     background: $color-blue;
     color: $color-white;
@@ -113,13 +130,7 @@
       left: unset;
     }
   }
-  &__dropdown-item {
-    button {
-      width: 100%;
-      text-align: left;
-    }
-  }
-  &__dropdown-item:not(:last-child) .navbar__dropdown-link {
+  &__dropdown-item:not(:last-child) .navbarDefault__dropdown-link {
     @include md {
       border-bottom: 1px solid $color-white;
     }

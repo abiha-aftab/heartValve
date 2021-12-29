@@ -1,5 +1,8 @@
 .paginationDefault {
   list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  row-gap: 0.25rem;
   &__item {
     display: inline;
     text-transform: capitalize;

@@ -11,20 +11,20 @@
     }
   }
   &__title {
-    color: $color-white;
-    margin-bottom: 1.5rem;
+    font-size: $font-size-h4;
+    line-height: line-height($font-size-h4);
+    margin-bottom: 1rem;
+    a {
+      color: $color-white;
+    }
   }
   &__list {
     list-style: none;
     line-height: $line-height-list;
   }
-  // &__list-item {
-  //   &:not(:last-child) {
-  //     margin-bottom: 0.7rem;
-  //   }
-  // }
+  // #e0e2e2 on the slate footer is about 5.7:1; the old #b8b8b9 was 3:1.
   &__list-link {
-    color: $color-grey-2;
+    color: $color-grey-3;
     text-decoration: none;
     font-size: $font-size-small;
     &:hover {
@@ -33,9 +33,10 @@
   }
   &__footer-text {
     p {
-      font-size: 0.8rem;
+      font-size: $font-size-small;
+      line-height: 1.6;
       color: $color-white;
-      margin-bottom: 0;
+      margin-bottom: 0.5rem;
     }
   }
 }

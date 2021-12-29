@@ -51,37 +51,41 @@ const PaginationDefault = ({
     }
   })
 
+  if (links.length < 2) return null
+
+  // Breadcrumb trail: every ancestor links up, the current page is marked.
   return (
-    <ul className="paginationDefault">
-      {links.length > 1 &&
-        links.map((link, index) => {
-          const { text, url } = link
-          const counter = index + 1
-          if (counter !== links.length) {
-            return (
-              <li className="paginationDefault__item" key={index}>
-                <Link to={url} className="paginationDefault__link">
-                  {text}
-                </Link>
-                <FaAngleDoubleRight className="paginationDefault__icon" />
-              </li>
-            )
-          } else {
-            return (
-              <li
-                className="paginationDefault__item"
-                key={index}
-                data-kontent-item-id={pageId}
-                data-kontent-element-codename={pageCodename}
+    <nav aria-label="Breadcrumb">
+      <ol className="paginationDefault">
+        {links.map(({ text, url }, index) => {
+          const isCurrent = index === links.length - 1
+          return (
+            <li
+              className="paginationDefault__item"
+              key={url}
+              data-kontent-item-id={isCurrent ? pageId : undefined}
+              data-kontent-element-codename={
+                isCurrent ? pageCodename : undefined
+              }
+            >
+              <Link
+                to={url}
+                className="paginationDefault__link"
+                aria-current={isCurrent ? 'page' : undefined}
               >
-                <Link to={url} className="paginationDefault__link">
-                  {text}
-                </Link>
-              </li>
-            )
-          }
+                {text}
+              </Link>
+              {!isCurrent && (
+                <FaAngleDoubleRight
+                  className="paginationDefault__icon"
+                  aria-hidden="true"
+                />
+              )}
+            </li>
+          )
         })}
-    </ul>
+      </ol>
+    </nav>
   )
 }
 

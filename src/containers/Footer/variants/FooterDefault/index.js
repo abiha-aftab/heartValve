@@ -12,9 +12,11 @@ const FooterDefault = ({ footerLinks = null, footerText = null }) => {
             const { name, url, links } = item
             return (
               <div className="footerDefault__item" key={index}>
-                <Link to={url} className="footerDefault__title-link">
-                  <h4 className="footerDefault__title">{name}</h4>
-                </Link>
+                <h2 className="footerDefault__title">
+                  <Link to={url} className="footerDefault__title-link">
+                    {name}
+                  </Link>
+                </h2>
                 <ul className="footerDefault__list">
                   {links.map((link, index) => {
                     const { name, url } = link

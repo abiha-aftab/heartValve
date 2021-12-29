@@ -1,4 +1,9 @@
 .site-map-grid {
+  &__title {
+    font-size: $font-size-h4;
+    line-height: line-height($font-size-h4);
+    font-weight: $font-weight-normal;
+  }
   li {
     a {
       text-decoration: none;

@@ -1,76 +1,82 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import { FaCaretDown, FaCaretUp } from 'react-icons/fa'
 import { motion, AnimatePresence } from 'framer-motion'
 import { dropdownVariant } from '../../../../assets/animations/animations'
-import { Link } from 'gatsby'
-import { isExternalUrl } from '../../../../utils/links'
+import SiteLink from '../../../../components/SiteLink'
 import { useCurrentPath } from '../../../../utils/useCurrentPath'
 
 const Dropdown = ({
-  activeDropdown,
-  setActiveDropdown,
   id,
-  link: { name, url, links },
+  label,
+  icon = null,
+  url = '',
+  links,
+  isOpen,
+  onToggle,
+  onClose,
+  alignRight = false,
 }) => {
-  const toggleDropdown = (e, id) => {
-    e.preventDefault()
-    if (activeDropdown === id) {
-      setActiveDropdown(null)
-    } else {
-      setActiveDropdown(id)
-    }
-  }
-
+  const buttonRef = useRef(null)
   const currentPath = useCurrentPath()
-  const isCurrentSection = url !== '/' && currentPath.startsWith(url)
+  const isCurrentSection =
+    url !== '' && url !== '/' && currentPath.startsWith(url)
+  const menuId = `navbar-menu-${id}`
+
+  useEffect(() => {
+    if (!isOpen) return undefined
+    const closeOnEscape = (event) => {
+      if (event.key === 'Escape') {
+        onClose()
+        buttonRef.current?.focus()
+      }
+    }
+    document.addEventListener('keydown', closeOnEscape)
+    return () => document.removeEventListener('keydown', closeOnEscape)
+  }, [isOpen, onClose])
 
   return (
     <li className="navbarDefault__nav-item">
       <button
+        ref={buttonRef}
+        type="button"
         className={
-          activeDropdown === id || isCurrentSection
+          isOpen || isCurrentSection
             ? 'navbarDefault__nav-link navbarDefault__nav-link--active'
             : 'navbarDefault__nav-link'
         }
-        onClick={(e) => toggleDropdown(e, id)}
-        aria-expanded={activeDropdown === id ? 'true' : 'false'}
+        onClick={onToggle}
+        aria-expanded={isOpen}
+        aria-controls={menuId}
       >
-        {name} {activeDropdown === id ? <FaCaretUp /> : <FaCaretDown />}
+        {icon} {label}{' '}
+        {isOpen ? (
+          <FaCaretUp aria-hidden="true" />
+        ) : (
+          <FaCaretDown aria-hidden="true" />
+        )}
       </button>
       <AnimatePresence>
-        {activeDropdown === id && (
+        {isOpen && (
           <motion.ul
-            key={id}
+            id={menuId}
+            key={menuId}
             variants={dropdownVariant}
             initial="start"
             animate="end"
             exit="exit"
-            className="navbarDefault__dropdown"
-            aria-label={name}
+            className={`navbarDefault__dropdown${alignRight ? ' regional' : ''}`}
           >
-            {links.map((link, index) => {
-              const { name, url } = link
-              return (
-                <li className="navbarDefault__dropdown-item" key={index}>
-                  {isExternalUrl(url) ? (
-                    <a
-                      href={url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="navbarDefault__dropdown-link"
-                    >
-                      {name}
-                    </a>
-                  ) : (
-                    <button onClick={(e) => toggleDropdown(e, id)}>
-                      <Link to={url} className="navbarDefault__dropdown-link">
-                        {name}
-                      </Link>
-                    </button>
-                  )}
-                </li>
-              )
-            })}
+            {links.map((link) => (
+              <li className="navbarDefault__dropdown-item" key={link.url}>
+                <SiteLink
+                  to={link.url}
+                  className="navbarDefault__dropdown-link"
+                  onClick={onClose}
+                >
+                  {link.name}
+                </SiteLink>
+              </li>
+            ))}
           </motion.ul>
         )}
       </AnimatePresence>

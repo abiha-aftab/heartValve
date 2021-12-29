@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import '../../../../assets/scss/main.scss'
 import { prepareDataLinks } from '../../../../utils/prepareDataLinks'
-import NavbarRegional from '../../../../containers/Navbar/variants/NavbarRegional'
+import NavbarDefault from '../../../../containers/Navbar/variants/NavbarDefault'
 import FooterRegional from '../../../../containers/Footer/variants/FooterRegional'
 import KontentSmartLink from '@kontent-ai/smart-link'
+import { MotionConfig } from 'framer-motion'
 
 const LayoutRegional = ({ children, languageCode, header, footer }) => {
   const [languages, setLanguages] = useState([])
@@ -61,15 +62,20 @@ const LayoutRegional = ({ children, languageCode, header, footer }) => {
       data-kontent-environment-id={process.env.GATSBY_KONTENT_PROJECT_ID}
       data-kontent-language-codename={languageCode}
     >
-      <NavbarRegional
-        languageCode={languageCode}
-        navLogo={navLogo}
-        navLinks={navLinks}
-        languages={languages}
-        languageSelectorText={languageSelectorText}
-      />
-      {children}
-      <FooterRegional footerLinks={footerLinks} footerText={footerText} />
+      <MotionConfig reducedMotion="user">
+        <a className="skip-link" href="#main">
+          Skip to content
+        </a>
+        <NavbarDefault
+          homePath={`/${languageCode}`}
+          navLogo={navLogo}
+          navLinks={navLinks}
+          languages={languages}
+          languageSelectorText={languageSelectorText}
+        />
+        <main id="main">{children}</main>
+        <FooterRegional footerLinks={footerLinks} footerText={footerText} />
+      </MotionConfig>
     </div>
   )
 }

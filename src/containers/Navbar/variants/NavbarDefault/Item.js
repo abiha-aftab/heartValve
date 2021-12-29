@@ -1,19 +1,16 @@
 import React from 'react'
-import { Link } from 'gatsby'
+import SiteLink from '../../../../components/SiteLink'
 
-const Item = ({ link, index }) => {
-  const { name, url } = link
-  return (
-    <li className="navbarDefault__nav-item" key={index}>
-      <Link
-        to={url}
-        className="navbarDefault__nav-link"
-        activeClassName="navbarDefault__nav-link--active"
-      >
-        {name}
-      </Link>
-    </li>
-  )
-}
+const Item = ({ link: { name, url } }) => (
+  <li className="navbarDefault__nav-item">
+    <SiteLink
+      to={url}
+      className="navbarDefault__nav-link"
+      activeClassName="navbarDefault__nav-link--active"
+    >
+      {name}
+    </SiteLink>
+  </li>
+)
 
 export default Item

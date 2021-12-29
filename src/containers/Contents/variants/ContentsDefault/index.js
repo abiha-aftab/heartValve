@@ -14,12 +14,8 @@ const ContentsDefault = ({ data }) => {
     },
   } = data.elements
   const { codename, id } = data.system
-  const {
-    alt: { value: image_alt },
-    asset: {
-      value: [image_asset],
-    },
-  } = image.elements
+  const image_alt = image?.elements.alt.value || ''
+  const image_asset = image?.elements.asset.value[0]
   return (
     <section className="section bg-slate-2" data-kontent-item-id={id}>
       <div className="container grid-1 grid-md-2">
@@ -49,13 +45,15 @@ const ContentsDefault = ({ data }) => {
             )
           })}
         </div>
-        <ImageElement
-          data-kontent-item-id={image.system.id}
-          data-kontent-element-codename={image.system.codename}
-          image={image_asset}
-          className="order-1 order-md-2"
-          alt={image_alt || 'Patient with doctor'}
-        />
+        {image_asset && (
+          <ImageElement
+            data-kontent-item-id={image.system.id}
+            data-kontent-element-codename={image.system.codename}
+            image={image_asset}
+            className="order-1 order-md-2"
+            alt={image_alt}
+          />
+        )}
       </div>
     </section>
   )

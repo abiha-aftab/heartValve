@@ -2,41 +2,31 @@ import React from 'react'
 import { ImageElement } from '@kontent-ai/gatsby-components'
 import { StaticImage } from 'gatsby-plugin-image'
 
+// Decorative page banner: empty alt text unless the CMS provides one.
 const HeroSmall = ({ image }) => {
-  let hero = ''
-  let id, codename
-
-  if (image) {
-    id = image.system.id
-    codename = image.system.codename
-  }
-  if (image) {
-    const {
-      alt: { value: image_alt },
-      asset: {
-        value: [image_asset],
-      },
-    } = image.elements
-    hero = (
-      <ImageElement
-        image={image_asset}
-        className="heroSmall"
-        alt={image_alt || 'hero image'}
-      />
-    )
-  } else {
-    hero = (
-      <StaticImage
-        className="heroSmall"
-        src="../../../../assets/images/page-banner.jpeg"
-        alt="hero image"
-      />
-    )
-  }
+  const asset = image?.elements.asset.value[0]
   return (
-    <section data-kontent-item-id={id} data-kontent-element-codename={codename}>
-      {hero}
-    </section>
+    <div
+      className="heroSmall__wrapper"
+      data-kontent-item-id={image?.system.id}
+      data-kontent-element-codename={image?.system.codename}
+    >
+      {asset ? (
+        <ImageElement
+          image={asset}
+          className="heroSmall"
+          alt={image.elements.alt.value || ''}
+          layout="fullWidth"
+        />
+      ) : (
+        <StaticImage
+          className="heroSmall"
+          src="../../../../assets/images/page-banner.jpeg"
+          alt=""
+          layout="fullWidth"
+        />
+      )}
+    </div>
   )
 }
 

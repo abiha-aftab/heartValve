@@ -1,7 +1,7 @@
 import React from 'react'
 import AccordionBasic from '../../../../components/Accordion/variants/AccordionBasic'
 import Modal from '../../../../components/Modal'
-import { RichTextElement } from '@kontent-ai/gatsby-components'
+import RichText from '../../../../components/RichText'
 import FormBasic from '../../../../components/Form/variants/FormBasic'
 
 const ContentsPageTemplate = ({
@@ -20,41 +20,7 @@ const ContentsPageTemplate = ({
           className="contentPage"
           data-kontent-element-codename={itemCodename}
         >
-          <RichTextElement
-            value={body.value}
-            linkedItems={body.modular_content}
-            resolveLinkedItem={(linkedItem) => {
-              if (!linkedItem) {
-                return (
-                  <strong style={{ color: 'red' }}>
-                    ⚠ Linked item is no longer in the response.
-                  </strong>
-                )
-              }
-
-              const { __typename, elements } = linkedItem
-              // Case for multi columns
-              if (__typename === 'kontent_item_summaries') {
-                return (
-                  <div className="grid-1 grid-md-2 gap-1 gap-md-2">
-                    {elements.rich_text.value.map((column, index) => {
-                      return (
-                        <div className="column-grid" key={index}>
-                          <RichTextElement
-                            value={column.elements.rich_text.value}
-                          />
-                        </div>
-                      )
-                    })}
-                  </div>
-                )
-              }
-
-              return (
-                <strong style={{ color: 'red' }}>⚠ Item not resolved.</strong>
-              )
-            }}
-          />
+          <RichText value={body.value} linkedItems={body.modular_content} />
         </div>
         {accordions.length > 0 && <AccordionBasic data={accordions} />}
         {modal.length > 0 &&
@@ -74,9 +40,7 @@ const ContentsPageTemplate = ({
               id={marketo_form[0].elements.id.value.replace('mktoForm_', '')}
             />
             {marketo_form[0].elements.footnotes && (
-              <RichTextElement
-                value={marketo_form[0].elements.footnotes.value}
-              />
+              <RichText value={marketo_form[0].elements.footnotes.value} />
             )}
           </div>
         )}

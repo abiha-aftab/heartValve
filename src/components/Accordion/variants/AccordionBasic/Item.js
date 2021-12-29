@@ -1,6 +1,11 @@
-import React from 'react'
+import React, { useId } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { RichTextElement } from '@kontent-ai/gatsby-components'
+import RichText from '../../../RichText'
+
+const accordionVariant = {
+  collapsed: { height: 0, opacity: 0 },
+  open: { height: 'auto', opacity: 1 },
+}
 
 const AccordionItem = ({ item, index, isActive, setIsActive }) => {
   const {
@@ -8,51 +13,44 @@ const AccordionItem = ({ item, index, isActive, setIsActive }) => {
     description: { value: body, modular_content },
   } = item.elements
   const { id, codename } = item.system
-  const toggleActiveTab = (index) => {
-    if (isActive === index) {
-      setIsActive(null)
-    } else {
-      setIsActive(index)
-    }
-  }
-
-  const accordionVariant = {
-    collapsed: {
-      height: 0,
-      opacity: 0,
-    },
-    open: {
-      height: 'auto',
-      opacity: 1,
-    },
-  }
+  const isOpen = isActive === index
+  const buttonId = useId()
+  const panelId = useId()
 
   return (
     <div
       className={
-        isActive === index
+        isOpen
           ? 'accordionBasic__item accordionBasic__item--active'
           : 'accordionBasic__item'
       }
     >
-      <button
-        className="accordionBasic__button"
-        onClick={() => toggleActiveTab(index)}
-        aria-expanded={isActive === index ? 'true' : 'false'}
-        data-kontent-item-id={id}
-        data-kontent-element-codename={codename}
-      >
-        {title}
-      </button>
+      <h3 className="accordionBasic__heading">
+        <button
+          type="button"
+          id={buttonId}
+          className="accordionBasic__button"
+          onClick={() => setIsActive(isOpen ? null : index)}
+          aria-expanded={isOpen}
+          aria-controls={panelId}
+          data-kontent-item-id={id}
+          data-kontent-element-codename={codename}
+        >
+          {title}
+        </button>
+      </h3>
       <AnimatePresence initial={false}>
-        {isActive === index && (
+        {isOpen && (
           <motion.div
-            key={index}
+            key={panelId}
+            id={panelId}
+            role="region"
+            aria-labelledby={buttonId}
             variants={accordionVariant}
             initial="collapsed"
             animate="open"
             exit="collapsed"
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.3 }}
             className="accordionBasic__body"
           >
             <div
@@ -60,44 +58,7 @@ const AccordionItem = ({ item, index, isActive, setIsActive }) => {
               data-kontent-item-id={id}
               data-kontent-element-codename={codename}
             >
-              <RichTextElement
-                value={body}
-                linkedItems={modular_content}
-                resolveLinkedItem={(linkedItem) => {
-                  if (!linkedItem) {
-                    return (
-                      <strong style={{ color: 'red' }}>
-                        ⚠ Linked item is no longer in the response.
-                      </strong>
-                    )
-                  }
-                  const { __typename, elements } = linkedItem
-                  // Case for multi columns
-                  if (__typename === 'kontent_item_summaries') {
-                    return (
-                      <div className="grid-1 grid-md-2 gap-1 gap-md-2">
-                        {elements.rich_text.value.map((column, index) => {
-                          return (
-                            <div
-                              className={`column-grid column-${index}`}
-                              key={index}
-                            >
-                              <RichTextElement
-                                value={column.elements.rich_text.value}
-                              />
-                            </div>
-                          )
-                        })}
-                      </div>
-                    )
-                  }
-                  return (
-                    <strong style={{ color: 'red' }}>
-                      ⚠ Item not resolved.
-                    </strong>
-                  )
-                }}
-              />
+              <RichText value={body} linkedItems={modular_content} />
             </div>
           </motion.div>
         )}

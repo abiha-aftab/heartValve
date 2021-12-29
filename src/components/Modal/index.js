@@ -1,65 +1,54 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useId, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { modalVariants } from '../../assets/animations/animations'
-import { backdropVariants } from '../../assets/animations/animations'
-import { RichTextElement } from '@kontent-ai/gatsby-components'
+import {
+  backdropVariants,
+  modalVariants,
+} from '../../assets/animations/animations'
+import RichText from '../RichText'
 
-const useDisableBodyScroll = (open) => {
-  useEffect(() => {
-    if (open) {
-      document.body.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = 'unset'
-    }
-  }, [open])
-}
-
-let useClickOutside = (handler) => {
-  let domNode = useRef()
-  useEffect(() => {
-    let mouseDownHandler = (event) => {
-      if (!domNode?.current?.contains(event.target)) {
-        handler()
-      }
-    }
-    document.addEventListener('mousedown', mouseDownHandler)
-    return () => {
-      document.removeEventListener('mousedown', mouseDownHandler)
-    }
-  })
-  return domNode
-}
-
+// Disclaimer dialog: focus moves into it on open, Escape or a click on the
+// backdrop closes it, and focus returns to the button that opened it.
 const Modal = ({ modalData, trigger }) => {
-  const { elements } = modalData[0]
-  const { id, codename } = modalData[0].system
-  const { body } = elements
+  const [{ elements, system }] = modalData
   const [showModal, setShowModal] = useState(false)
-  //disable the scroll when modal is open
-  useDisableBodyScroll(showModal)
+  const triggerRef = useRef(null)
+  const closeRef = useRef(null)
+  const titleId = useId()
+  const wasOpen = useRef(false)
 
-  //modal should close when clicked outside
-  let domNode = useClickOutside(() => {
-    setShowModal(false)
-  })
-
-  //modal should close when escape is pressed
   useEffect(() => {
-    const close = (e) => {
-      if (e.keyCode === 27) {
-        setShowModal(false)
-      }
+    if (showModal) {
+      document.body.style.overflow = 'hidden'
+      closeRef.current?.focus()
+      wasOpen.current = true
+    } else {
+      document.body.style.overflow = ''
+      if (wasOpen.current) triggerRef.current?.focus()
     }
-    window.addEventListener('keydown', close)
-    return () => window.removeEventListener('keydown', close)
-  })
+  }, [showModal])
+
+  useEffect(() => {
+    if (!showModal) return undefined
+    const closeOnEscape = (event) => {
+      if (event.key === 'Escape') setShowModal(false)
+    }
+    window.addEventListener('keydown', closeOnEscape)
+    return () => window.removeEventListener('keydown', closeOnEscape)
+  }, [showModal])
+
+  const closeFromBackdrop = (event) => {
+    if (!event.target.closest('.modal__content')) setShowModal(false)
+  }
+
   return (
-    <div data-kontent-item-id={id}>
+    <div data-kontent-item-id={system.id}>
       <button
+        ref={triggerRef}
+        type="button"
         className="btn btn-blue"
         onClick={() => setShowModal(true)}
-        tabIndex={0}
-        data-kontent-element-codename={codename}
+        aria-haspopup="dialog"
+        data-kontent-element-codename={system.codename}
       >
         {trigger}
       </button>
@@ -71,42 +60,44 @@ const Modal = ({ modalData, trigger }) => {
             initial="hidden"
             animate="visible"
             exit="hidden"
+            onClick={closeFromBackdrop}
           >
             <motion.div
               className="modal"
               variants={modalVariants}
-              aria-modal="true"
               role="dialog"
+              aria-modal="true"
+              aria-labelledby={titleId}
             >
-              <div className="modal__content" ref={domNode}>
+              <div className="modal__content">
                 <div className="modal__header">
-                  <h3
+                  <h2
+                    id={titleId}
                     className="modal__title"
-                    data-kontent-element-codename={codename}
+                    data-kontent-element-codename={system.codename}
                   >
                     {elements.title.value}
-                  </h3>
+                  </h2>
                   <button
+                    ref={closeRef}
+                    type="button"
                     className="modal__close"
-                    data-dismiss="modal"
                     aria-label="Close"
                     onClick={() => setShowModal(false)}
                   >
                     <span aria-hidden="true">&times;</span>
                   </button>
                 </div>
-
                 <div
                   className="modal__body"
-                  data-kontent-element-codename={codename}
+                  data-kontent-element-codename={system.codename}
                 >
-                  <RichTextElement value={body.value} />
+                  <RichText value={elements.body.value} />
                 </div>
                 <div className="modal__footer">
                   <button
                     type="button"
                     className="btn btn-crimson"
-                    aria-label="Close"
                     onClick={() => setShowModal(false)}
                   >
                     Close

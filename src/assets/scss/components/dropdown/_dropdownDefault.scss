@@ -1,21 +1,15 @@
 .dropdownDefault {
-  list-style: none;
+  margin-top: $spacer;
   &__dropdown {
     width: 15rem;
+    max-width: 100%;
     display: block;
+    list-style: none;
+    border: 1px solid $color-grey;
+    border-top: none;
   }
   &__dropdown-item {
-    list-style: none;
-    button {
-      width: 15rem;
-      text-align: left;
-      border-left: 1px solid $color-grey;
-      border-right: 1px solid $color-grey;
-    }
-    &:first-child {
-      border-top: 1px solid $color-grey;
-    }
-    &:last-child {
+    &:not(:last-child) {
       border-bottom: 1px solid $color-grey;
     }
   }
