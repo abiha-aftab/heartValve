@@ -1,0 +1,11 @@
+.git
+node_modules
+.cache
+public
+coverage
+docs
+.env
+.env.*
+!.env.example
+Dockerfile
+.dockerignore
