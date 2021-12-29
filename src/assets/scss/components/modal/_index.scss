@@ -1,0 +1,68 @@
+.modal {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  margin: 1rem;
+  justify-content: center;
+  align-items: center;
+  ::selection {
+    background: #8ba9bd;
+    color: white;
+  }
+  &__header {
+    display: flex;
+    padding: 1rem;
+    justify-content: center;
+    align-items: center;
+    border-bottom: 1px solid $color-grey-3;
+    font-size: 1.75rem;
+    color: $color-slate;
+    position: relative;
+  }
+  &__title {
+    margin-bottom: 0;
+  }
+  &__body {
+    padding: 1rem 2rem;
+  }
+  &__footer {
+    display: flex;
+    justify-content: center;
+    padding: 1rem;
+    border-top: 1px solid $color-grey-3;
+  }
+  &__content {
+    color: $color-slate;
+    background-color: $color-white;
+    overflow-y: auto;
+    @include md {
+      max-width: 800px;
+    }
+  }
+  &__close {
+    position: absolute;
+    right: $spacer;
+    padding: $spacer;
+    font-size: $font-size-h3;
+    font-weight: $font-weight-bold;
+    border: 0;
+    background-color: $color-white;
+    cursor: pointer;
+    color: $color-slate;
+    transition: $transition-default;
+    &:hover {
+      color: $color-crimson;
+    }
+  }
+}
+
+.backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba($color-black, 0.5);
+  z-index: 1;
+}

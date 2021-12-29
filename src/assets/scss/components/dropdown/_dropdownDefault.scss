@@ -1,0 +1,41 @@
+.dropdownDefault {
+  list-style: none;
+  &__dropdown {
+    width: 15rem;
+    display: block;
+  }
+  &__dropdown-item {
+    list-style: none;
+    button {
+      width: 15rem;
+      text-align: left;
+      border-left: 1px solid $color-grey;
+      border-right: 1px solid $color-grey;
+    }
+    &:first-child {
+      border-top: 1px solid $color-grey;
+    }
+    &:last-child {
+      border-bottom: 1px solid $color-grey;
+    }
+  }
+  &__dropdown-link {
+    text-decoration: none;
+    padding: $spacer;
+    display: block;
+    font-size: $font-size-small;
+    color: $color-slate;
+    transition: $transition-default;
+    &:hover {
+      background: $color-slate-2;
+    }
+    @include md {
+      padding: $spacer;
+      background: $color-white;
+      color: $color-slate;
+      &:hover {
+        background: darken($color-grey, $btn-hover-amount);
+      }
+    }
+  }
+}

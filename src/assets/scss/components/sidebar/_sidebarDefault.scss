@@ -1,0 +1,52 @@
+%sidebarItem {
+  display: flex;
+  padding: 1rem;
+  align-items: center;
+  text-decoration: none;
+  color: $color-slate;
+}
+
+.sidebarDefault {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  &__toggle {
+    align-self: flex-start;
+    @include md {
+      display: none;
+    }
+  }
+  &__list {
+    list-style: none;
+    position: absolute;
+    background: $color-white;
+    top: 3.5rem;
+    border: 1px solid $color-grey-3;
+    z-index: 2;
+    @include md {
+      position: relative;
+      top: 0;
+      border: none;
+    }
+  }
+  &__item:not(:last-child) .sidebarDefault__link {
+    border-bottom: 1px solid $color-slate-1;
+  }
+  &__item {
+    word-break: break-all;
+    &--headline {
+      background-color: $color-grey;
+      @extend %sidebarItem;
+    }
+  }
+  &__link {
+    padding-left: 1.5rem;
+    @extend %sidebarItem;
+    &:hover {
+      text-decoration: underline;
+    }
+    &--active {
+      font-weight: bold;
+    }
+  }
+}

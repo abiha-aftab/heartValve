@@ -1,0 +1,22 @@
+.btn {
+  // padding: 1rem;
+  padding: 0.625rem 1.25rem;
+  text-decoration: none;
+  display: inline-block;
+  transition: $transition-default;
+  border:none;
+  font-size: $font-size-base;
+  font-weight: $font-weight-bold;
+  cursor: pointer;
+  @each $key, $val in $colors {
+    &-#{$key} {
+      background: #{$val};
+      color: contrast($val);
+      text-decoration: none;
+      display: inline-block;
+      &:hover {
+        background: darken($val, $btn-hover-amount);
+      }
+    }
+  }
+}

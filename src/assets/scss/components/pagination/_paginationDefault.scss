@@ -1,0 +1,28 @@
+.paginationDefault {
+  list-style: none;
+  &__item {
+    display: inline;
+    text-transform: capitalize;
+    a {
+      color: $color-crimson;
+      &:hover {
+        color: $color-blue;
+        text-decoration: underline;
+      }
+    }
+    svg {
+      margin: 0 0.4rem;
+      fill: $color-grey-2;
+      vertical-align: text-bottom;
+    }
+  }
+  &__item:last-child {
+    a {
+      color: $color-slate;
+    }
+  }
+  &__link {
+    text-decoration: none;
+    position: relative;
+  }
+}

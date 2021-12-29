@@ -1,0 +1,40 @@
+{
+  "name": "yourheartvalve-headless",
+  "version": "1.0.0",
+  "author": "Edwards",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "develop": "gatsby develop",
+    "start": "gatsby develop",
+    "build": "gatsby build",
+    "serve": "gatsby serve",
+    "clean": "gatsby clean"
+  },
+  "keywords": [
+    "Gatsby",
+    "Kontent",
+    "Headless CMS",
+    "CMS"
+  ],
+  "dependencies": {
+    "@kentico/gatsby-kontent-components": "^7.2.0",
+    "@kentico/gatsby-source-kontent": "^7.2.0",
+    "@kentico/kontent-smart-link": "^2.1.0",
+    "framer-motion": "^5.2.1",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-helmet": "^6.1.0"
+  },
+  "devDependencies": {
+    "gatsby": "^3.9.1",
+    "gatsby-plugin-image": "^1.14.1",
+    "gatsby-plugin-sass": "^5.1.0",
+    "gatsby-plugin-sharp": "^3.9.0",
+    "gatsby-source-filesystem": "^3.14.0",
+    "gatsby-transformer-sharp": "^4.1.0",
+    "prettier": "^2.3.2",
+    "react-icons": "^4.3.1",
+    "sass": "^1.43.4"
+  }
+}

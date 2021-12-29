@@ -1,0 +1,46 @@
+.footerRegional {
+  hr {
+    margin: 1rem 0;
+  }
+  &__title-link {
+    display: inline-block;
+    text-decoration: none;
+    &:hover {
+      text-decoration: underline;
+      text-decoration-color: $color-white;
+    }
+  }
+  &__title {
+    color: $color-white;
+  }
+  &__list {
+    list-style: none;
+    line-height: $line-height-list;
+    margin-bottom: 2rem;
+  }
+  &__list-item {
+    display: inline;
+    &:not(:last-child) {
+      margin-bottom: 1rem;
+      &:after {
+        content: "|";
+        margin: 0 1rem;
+      }
+    }
+  }
+  &__list-link {
+    color: $color-white;
+    text-decoration: none;
+    font-size: $font-size-small;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+  &__footer-text {
+    p {
+      font-size: 0.8rem;
+      color: $color-white;
+      margin-bottom: 0;
+    }
+  }
+}

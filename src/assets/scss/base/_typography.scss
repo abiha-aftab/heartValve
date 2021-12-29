@@ -1,0 +1,125 @@
+* {
+  ::selection {
+    background: #8ba9bd;
+    color: white;
+  }
+}
+body {
+  font-size: $font-size-base;
+  line-height: line-height($font-size-base);
+  color: $color-slate;
+}
+
+h1 {
+  font-size: $font-size-h1;
+  line-height: line-height($font-size-h1);
+  margin-bottom: $spacer;
+  font-weight: $font-weight-light;
+  color: $color-slate;
+}
+
+h2 {
+  font-size: $font-size-h2;
+  line-height: line-height($font-size-h2);
+  font-weight: $font-weight-light;
+  color: $color-crimson;
+  margin-bottom: $spacer;
+  color: $color-slate;
+  text-transform: capitalize;
+}
+
+h3 {
+  font-size: $font-size-h3;
+  line-height: line-height($font-size-h3);
+  font-weight: $font-weight-normal;
+  margin-bottom: $spacer;
+  color: $color-slate;
+}
+
+h4 {
+  font-size: $font-size-h4;
+  line-height: line-height($font-size-h4);
+  margin-bottom: $spacer;
+}
+
+p {
+  font-size: $font-size-base;
+  line-height: line-height($font-size-base);
+  margin-bottom: $spacer;
+  color: $color-slate;
+  font-weight: $font-weight-lightest;
+}
+
+b,
+strong {
+  font-weight: $font-weight-normal;
+}
+
+li,
+tr {
+  font-weight: $font-weight-lightest;
+}
+
+.list {
+  font-size: $font-size-base;
+  line-height: $line-height-list;
+  margin-bottom: $spacer;
+  color: $color-slate;
+  &__item {
+    &:not(:last-child) {
+      margin-bottom: 0.5rem;
+    }
+  }
+  &--unstyled {
+    list-style: none;
+  }
+}
+
+.small {
+  font-size: $font-size-small;
+  line-height: line-height($font-size-small);
+  margin-bottom: 0;
+}
+
+.category {
+  a {
+    text-decoration: none;
+    &:hover {
+      color: $color-blue;
+      text-decoration: underline;
+    }
+  }
+}
+.contentDefault h2 {
+  text-transform: none;
+}
+
+.lead,
+.lead p {
+  font-size: $font-size-lead;
+  line-height: line-height($font-size-lead);
+  margin-bottom: $spacer * 2;
+  color: $color-slate;
+  font-weight: $font-weight-lightest;
+}
+
+a {
+  color: $color-crimson;
+  @include focus;
+}
+
+hr {
+  margin: 2rem 0;
+  border-color: $color-slate-3;
+  @include md {
+    margin: 3rem 0;
+  }
+}
+
+button {
+  border: none;
+  font-size: $font-size-base;
+  line-height: line-height($font-size-base);
+  cursor: pointer;
+  @include focus;
+}
