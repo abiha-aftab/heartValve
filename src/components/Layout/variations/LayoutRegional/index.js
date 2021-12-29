@@ -3,7 +3,7 @@ import '../../../../assets/scss/main.scss'
 import { prepareDataLinks } from '../../../../utils/prepareDataLinks'
 import NavbarRegional from '../../../../containers/Navbar/variants/NavbarRegional'
 import FooterRegional from '../../../../containers/Footer/variants/FooterRegional'
-import KontentSmartLink from '@kentico/kontent-smart-link'
+import KontentSmartLink from '@kontent-ai/smart-link'
 
 const LayoutRegional = ({ children, languageCode, header, footer }) => {
   const [languages, setLanguages] = useState([])
@@ -60,7 +60,7 @@ const LayoutRegional = ({ children, languageCode, header, footer }) => {
   return (
     <div
       className="layout"
-      data-kontent-project-id={process.env.GATSBY_KONTENT_PROJECT_ID}
+      data-kontent-environment-id={process.env.GATSBY_KONTENT_PROJECT_ID}
       data-kontent-language-codename={languageCode}
     >
       <NavbarRegional

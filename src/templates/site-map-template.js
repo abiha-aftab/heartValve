@@ -1,6 +1,7 @@
 import React from 'react'
 import { graphql } from 'gatsby'
 import SiteMap from '../components/SiteMap'
+import SEO from '../components/SEO'
 import Layout from '../components/Layout/variations/LayoutDefault'
 
 export default function SiteMapTemplate({ pageContext: { languageCode, pageID }, data }) {
@@ -47,6 +48,13 @@ export default function SiteMapTemplate({ pageContext: { languageCode, pageID },
         </Layout>
     )
 }
+
+export const Head = ({ data, location, pageContext }) => (
+  <SEO
+    title={data.siteMapPage?.elements.title.value || 'Site map'}
+    pathname={location.pathname}
+  />
+)
 
 export const pageQuery = graphql`
   query SiteMapQuery($languageCode: String, $pageID: String) {

@@ -4,7 +4,7 @@ import FooterDefault from '../../containers/Footer/variants/FooterDefault'
 import NavbarDefault from '../../containers/Navbar/variants/NavbarDefault'
 import { useStaticQuery, graphql } from 'gatsby'
 import { prepareDataLinks } from '../../utils/prepareDataLinks'
-import KontentSmartLink from '@kentico/kontent-smart-link'
+import KontentSmartLink from '@kontent-ai/smart-link'
 
 const Layout = ({ children }) => {
   const data = useStaticQuery(graphql`
@@ -67,7 +67,7 @@ const Layout = ({ children }) => {
   return (
     <div
       className="layout"
-      data-kontent-project-id={process.env.GATSBY_KONTENT_PROJECT_ID}
+      data-kontent-environment-id={process.env.GATSBY_KONTENT_PROJECT_ID}
       data-kontent-language-codename={
         process.env.GATSBY_KONTENT_LANGUAGE_CODENAMES
       }

@@ -1,12 +1,14 @@
 import React from 'react'
-import PropTypes from 'prop-types'
-import { Helmet } from 'react-helmet'
-import { useLocation } from '@reach/router'
 import { useStaticQuery, graphql } from 'gatsby'
-import { stripScripts } from '../../utils/stripScripts'
+import { extractScripts } from '../../utils/extractScripts'
 
-const SEO = ({ title, description, image, article }) => {
-  const { pathname } = useLocation()
+// Kontent language codenames that are not valid BCP 47 tags ("eu" is the
+// European English site, not Basque).
+const HTML_LANG = { default: 'en', eu: 'en' }
+
+// Rendered from each page's `Head` export (Gatsby Head API), so the tags are
+// part of the server-rendered HTML.
+const SEO = ({ title, description, image, pathname = '', lang = 'en' }) => {
   const { site, header } = useStaticQuery(query)
 
   const {
@@ -24,71 +26,38 @@ const SEO = ({ title, description, image, article }) => {
     description: description || defaultDescription,
     image: `${siteUrl}${image || defaultImage}`,
     url: `${siteUrl}${pathname}`,
-    trustArc: `${trustArc}`
   }
-
-  const { head_scripts, body_scripts } = header.elements
-  const headScripts = stripScripts(head_scripts.value)
-  const bodyScripts = stripScripts(body_scripts.value)
+  const headScripts = extractScripts(header?.elements.head_scripts.value)
 
   return (
     <>
-      <Helmet title={seo.title} titleTemplate={titleTemplate}>
-        <meta name="description" content={seo.description} />
-        <meta name="image" content={seo.image} />
-
-        {seo.url && <meta property="og:url" content={seo.url} />}
-
-        {(article ? true : null) && <meta property="og:type" content="article" />}
-
-        {seo.title && <meta property="og:title" content={seo.title} />}
-
-        {seo.description && (
-          <meta property="og:description" content={seo.description} />
-        )}
-
-        {seo.image && <meta property="og:image" content={seo.image} />}
-
-        <meta name="twitter:card" content="summary_large_image" />
-
-        {twitterUsername && (
-          <meta name="twitter:creator" content={twitterUsername} />
-        )}
-
-        {seo.title && <meta name="twitter:title" content={seo.title} />}
-
-        {seo.description && (
-          <meta name="twitter:description" content={seo.description} />
-        )}
-
-        {seo.image && <meta name="twitter:image" content={seo.image} />}
-      </Helmet>
-      {seo.trustArc && <Helmet script={[{src: trustArc, async: true}]} />}
-      {headScripts && headScripts.length > 0 && <Helmet script={headScripts} />}
-      {bodyScripts && bodyScripts.length > 0 && bodyScripts.map(script => {
-        return (
-          <noscript>{script.innerHTML}</noscript>
-        ) })
-      }
+      <html lang={HTML_LANG[lang] || lang} />
+      <title>{titleTemplate.replace('%s', seo.title)}</title>
+      <meta name="description" content={seo.description} />
+      <meta name="image" content={seo.image} />
+      <meta property="og:url" content={seo.url} />
+      <meta property="og:title" content={seo.title} />
+      <meta property="og:description" content={seo.description} />
+      <meta property="og:image" content={seo.image} />
+      <meta name="twitter:card" content="summary_large_image" />
+      {twitterUsername && (
+        <meta name="twitter:creator" content={twitterUsername} />
+      )}
+      <meta name="twitter:title" content={seo.title} />
+      <meta name="twitter:description" content={seo.description} />
+      <meta name="twitter:image" content={seo.image} />
+      {trustArc && <script src={trustArc} async />}
+      {headScripts.map((script, index) => (
+        <script
+          key={index}
+          dangerouslySetInnerHTML={{ __html: script }}
+        />
+      ))}
     </>
   )
 }
 
 export default SEO
-
-SEO.propTypes = {
-  title: PropTypes.string,
-  description: PropTypes.string,
-  image: PropTypes.string,
-  article: PropTypes.bool,
-}
-
-SEO.defaultProps = {
-  title: null,
-  description: null,
-  image: null,
-  article: false,
-}
 
 const query = graphql`
   query SEO {
@@ -106,9 +75,6 @@ const query = graphql`
     header: kontentItemHeader {
       elements {
         head_scripts {
-          value
-        }
-        body_scripts {
           value
         }
       }

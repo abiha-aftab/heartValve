@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'gatsby'
-import { RichTextElement } from '@kentico/gatsby-kontent-components'
+import { RichTextElement } from '@kontent-ai/gatsby-components'
 
 const FooterRegional = ({ footerLinks = null, footerText = null }) => {
   return (

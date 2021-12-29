@@ -1,14 +1,12 @@
 import React, { Fragment } from 'react'
 import { Link } from 'gatsby'
 import PaginationDefault from '../Pagination/variants/PaginationDefault'
-import SEO from '../SEO'
 import HeroSmall from '../../containers/Hero/variants/HeroSmall'
 
 const SiteMap = (data) => {
     const { result, languageCode, siteMapPage } = data;
     return (
         <Fragment>
-            <SEO title={siteMapPage.elements.title.value} />
             <HeroSmall image={siteMapPage.elements.image.value ? siteMapPage.elements.image.value[0] : null} />
             <section className="section">
                 <div className="container">

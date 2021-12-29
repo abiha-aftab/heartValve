@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { modalVariants } from '../../assets/animations/animations'
 import { backdropVariants } from '../../assets/animations/animations'
-import { RichTextElement } from '@kentico/gatsby-kontent-components'
+import { RichTextElement } from '@kontent-ai/gatsby-components'
 
 const useDisableBodyScroll = (open) => {
   useEffect(() => {
@@ -63,7 +63,7 @@ const Modal = ({ modalData, trigger }) => {
       >
         {trigger}
       </button>
-      <AnimatePresence exitBeforeEnter>
+      <AnimatePresence mode="wait">
         {showModal && (
           <motion.div
             className="backdrop"

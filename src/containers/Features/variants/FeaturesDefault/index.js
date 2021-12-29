@@ -1,7 +1,7 @@
 import React from 'react'
 import CardBasic from '../../../../components/Card/variants/CardBasic'
 import { prepareDataPatientInformation } from '../../../../utils/prepareDataPatientInformation'
-import { RichTextElement } from '@kentico/gatsby-kontent-components'
+import { RichTextElement } from '@kontent-ai/gatsby-components'
 
 const FeaturesDefault = ({ data }) => {
   if (!data) {

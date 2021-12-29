@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import AccordionBasic from '../../../../components/Accordion/variants/AccordionBasic'
 import Modal from '../../../../components/Modal'
-import { RichTextElement } from '@kentico/gatsby-kontent-components'
+import { RichTextElement } from '@kontent-ai/gatsby-components'
 import FormBasic from '../../../../components/Form/variants/FormBasic'
 
 const ContentsPageTemplate = ({

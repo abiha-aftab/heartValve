@@ -3,7 +3,7 @@ import { Link } from 'gatsby'
 import {
   ImageElement,
   RichTextElement,
-} from '@kentico/gatsby-kontent-components'
+} from '@kontent-ai/gatsby-components'
 
 const ContentsDefault = ({ data }) => {
   if (!data) {

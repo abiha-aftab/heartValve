@@ -23,13 +23,16 @@ export default function Home({ data }) {
   } = sections
   return (
     <Layout>
-      <SEO title="Home" />
       <HeroLarge data={pageBanner} />
       <FeaturesDefault data={patientInformation} />
       <ContentsDefault data={heartAnatomy} />
     </Layout>
   )
 }
+
+export const Head = ({ location }) => (
+  <SEO title="Home" pathname={location.pathname} />
+)
 
 export const pageQuery = graphql`
   query IndexQuery {

@@ -6,7 +6,7 @@ require('dotenv').config()
 
 const { isOfflineMode, kontentSourceOptions } = require('./config/kontent')
 
-const KONTENT_SOURCE_PLUGIN = `@kentico/gatsby-source-kontent`
+const KONTENT_SOURCE_PLUGIN = `@kontent-ai/gatsby-source`
 const offline = isOfflineMode(process.env)
 
 module.exports = {
@@ -35,7 +35,22 @@ module.exports = {
       resolve: KONTENT_SOURCE_PLUGIN,
       options: kontentSourceOptions(process.env),
     },
-    `gatsby-plugin-sass`,
+    {
+      resolve: `gatsby-plugin-sass`,
+      options: {
+        // The 7-1 partials still use @import and global colour functions, and
+        // gatsby-plugin-sass drives Sass through its legacy JS API. Migrating
+        // to @use is tracked separately; until then keep the build log readable.
+        sassOptions: {
+          silenceDeprecations: [
+            'legacy-js-api',
+            'import',
+            'global-builtin',
+            'color-functions',
+          ],
+        },
+      },
+    },
     `gatsby-plugin-image`,
     `gatsby-plugin-sharp`,
     `gatsby-transformer-sharp`,

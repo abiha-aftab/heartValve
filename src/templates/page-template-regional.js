@@ -51,7 +51,6 @@ export default function PageTemplateRegional({
       header={data.header}
       footer={data.footer}
     >
-      <SEO title={title} />
       <HeroSmall image={image.value ? image.value[0] : null} />
       <section className="section">
         <div className="container">
@@ -108,6 +107,14 @@ export default function PageTemplateRegional({
     </LayoutRegional>
   )
 }
+
+export const Head = ({ data, location, pageContext }) => (
+  <SEO
+    title={data.page.elements.title.value}
+    pathname={location.pathname}
+    lang={pageContext.languageCode}
+  />
+)
 
 export const pageQuery = graphql`
   query RegionalPageQuery($languageCode: String, $pageID: String) {

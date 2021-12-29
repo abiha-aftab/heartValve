@@ -1,6 +1,6 @@
 import React from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { RichTextElement } from '@kentico/gatsby-kontent-components'
+import { RichTextElement } from '@kontent-ai/gatsby-components'
 
 const AccordionItem = ({ item, index, isActive, setIsActive, accordianId }) => {
   const {

@@ -97,7 +97,7 @@ exports.createPages = async ({ actions, graphql }) => {
           language === 'default'
             ? require.resolve(`./src/templates/site-map-template.js`)
             : require.resolve(`./src/templates/site-map-template-regional.js`),
-        context: { languageCode: language, path, pageID: siteMapPageID },
+        context: { languageCode: language, pageID: siteMapPageID },
       })
     })
   }

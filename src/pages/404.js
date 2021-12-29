@@ -7,7 +7,6 @@ import Layout from '../components/Layout/variations/LayoutDefault'
 const NotFound = () => {
   return (
     <Layout>
-      <SEO title="Not Found" />
       <HeroSmall/>
       <div className="section container">
         <h2>We're sorry. The page you're looking for can't be found.</h2>
@@ -35,3 +34,7 @@ const NotFound = () => {
 }
 
 export default NotFound
+
+export const Head = ({ location }) => (
+  <SEO title="Not Found" pathname={location.pathname} />
+)

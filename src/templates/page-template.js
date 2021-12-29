@@ -28,7 +28,6 @@ export default function PageTemplate({ pageContext: { pageID, item }, data }) {
   categoryPath[0] = `/${categoryPath[0]}`
   return (
     <Layout>
-      <SEO title={title} />
       <HeroSmall image={image.value ? image.value[0] : null} />
       <section className="section">
         <div className="container">
@@ -69,6 +68,10 @@ export default function PageTemplate({ pageContext: { pageID, item }, data }) {
     </Layout>
   )
 }
+
+export const Head = ({ data, location }) => (
+  <SEO title={data.page.elements.title.value} pathname={location.pathname} />
+)
 
 export const pageQuery = graphql`
   query PageQuery($pageID: String) {
