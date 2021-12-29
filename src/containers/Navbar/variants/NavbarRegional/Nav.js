@@ -2,7 +2,14 @@ import React from 'react'
 import Item from './Item'
 import Dropdown from './Dropdown'
 
-const Nav = ({ navLinks, mobile, activeDropdown, setActiveDropdown, languages = [], languageSelectorText }) => {
+const Nav = ({
+  navLinks,
+  mobile,
+  activeDropdown,
+  setActiveDropdown,
+  languages = [],
+  languageSelectorText,
+}) => {
   return (
     <ul
       className={
@@ -27,7 +34,7 @@ const Nav = ({ navLinks, mobile, activeDropdown, setActiveDropdown, languages = 
           )
         }
       })}
-      {languages.length > 0 &&
+      {languages.length > 0 && (
         <Dropdown
           key={languages.length}
           id={languages.length}
@@ -37,7 +44,7 @@ const Nav = ({ navLinks, mobile, activeDropdown, setActiveDropdown, languages = 
           languages={languages}
           languageSelectorText={languageSelectorText}
         />
-      }
+      )}
     </ul>
   )
 }

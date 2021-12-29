@@ -12,12 +12,12 @@ const Dropdown = ({
   id,
   link,
   languages = [],
-  languageSelectorText = null
+  languageSelectorText = null,
 }) => {
   let name = ''
   let url = ''
   let links = []
-  if(link) {
+  if (link) {
     name = link.name
     url = link.url
     links = link.links
@@ -45,9 +45,16 @@ const Dropdown = ({
             : 'navbarDefault__nav-link'
         }
         onClick={(e) => toggleDropdown(e, id)}
-        aria-expanded={activeDropdown === id ? "true":"false"}
+        aria-expanded={activeDropdown === id ? 'true' : 'false'}
       >
-        {languages.length > 0 ? <><FaGlobeAmericas /> {languageSelectorText || "Countries"}</> : name} {activeDropdown === id ? <FaCaretUp /> : <FaCaretDown />}
+        {languages.length > 0 ? (
+          <>
+            <FaGlobeAmericas /> {languageSelectorText || 'Countries'}
+          </>
+        ) : (
+          name
+        )}{' '}
+        {activeDropdown === id ? <FaCaretUp /> : <FaCaretDown />}
       </button>
       <AnimatePresence>
         {activeDropdown === id && (
@@ -64,11 +71,22 @@ const Dropdown = ({
               const { name, url } = link
               return (
                 <li className="navbarDefault__dropdown-item" key={index}>
-                  {
-                    isExternalUrl(url)
-                      ? <a href={url} target="_blank" rel="noreferrer" className="navbarDefault__dropdown-link">{name}</a>
-                      : <button onClick={(e) => toggleDropdown(e, id)}><Link to={url} className="navbarDefault__dropdown-link">{name}</Link></button>
-                  }
+                  {isExternalUrl(url) ? (
+                    <a
+                      href={url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="navbarDefault__dropdown-link"
+                    >
+                      {name}
+                    </a>
+                  ) : (
+                    <button onClick={(e) => toggleDropdown(e, id)}>
+                      <Link to={url} className="navbarDefault__dropdown-link">
+                        {name}
+                      </Link>
+                    </button>
+                  )}
                 </li>
               )
             })}

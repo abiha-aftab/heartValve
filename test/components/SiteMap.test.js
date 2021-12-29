@@ -12,11 +12,23 @@ describe('SiteMap', () => {
       <SiteMap
         languageCode=""
         siteMapPage={null}
-        groups={[{ name: 'Heart Basics', links: [{ title: 'Heart anatomy', url: '/heart-basics/heart-anatomy' }] }]}
+        groups={[
+          {
+            name: 'Heart Basics',
+            links: [
+              { title: 'Heart anatomy', url: '/heart-basics/heart-anatomy' },
+            ],
+          },
+        ]}
       />
     )
-    expect(screen.getByRole('heading', { name: 'Site map' })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: 'Heart anatomy' })).toHaveAttribute('href', '/heart-basics/heart-anatomy')
+    expect(
+      screen.getByRole('heading', { name: 'Site map' })
+    ).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Heart anatomy' })).toHaveAttribute(
+      'href',
+      '/heart-basics/heart-anatomy'
+    )
   })
 })
 
@@ -29,7 +41,11 @@ describe('SiteLink', () => {
   })
 
   it('uses the router link for internal paths', () => {
-    render(<SiteLink to="/heart-basics" activeClassName="active">Basics</SiteLink>)
+    render(
+      <SiteLink to="/heart-basics" activeClassName="active">
+        Basics
+      </SiteLink>
+    )
     const link = screen.getByRole('link', { name: 'Basics' })
     expect(link).toHaveAttribute('href', '/heart-basics')
     expect(link).not.toHaveAttribute('target')

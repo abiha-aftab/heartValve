@@ -10,12 +10,21 @@ const pageNode = (title, slug, topic) => ({
 
 describe('buildPagePath', () => {
   it.each([
-    [{ slug: 'heart-anatomy', topic: 'Heart Basics' }, '/heart-basics/heart-anatomy'],
+    [
+      { slug: 'heart-anatomy', topic: 'Heart Basics' },
+      '/heart-basics/heart-anatomy',
+    ],
     [{ slug: 'heart-basics', topic: 'Heart Basics' }, '/heart-basics'],
     [{ slug: '/Contact-Us/', topic: '' }, '/contact-us'],
     [{ slug: 'home', topic: 'Regional', language: 'de' }, '/de/'],
-    [{ slug: 'herzklappen', topic: 'Regional', language: 'de' }, '/de/herzklappen'],
-    [{ slug: 'faqs', topic: 'Heart Basics', language: 'nl' }, '/nl/heart-basics/faqs'],
+    [
+      { slug: 'herzklappen', topic: 'Regional', language: 'de' },
+      '/de/herzklappen',
+    ],
+    [
+      { slug: 'faqs', topic: 'Heart Basics', language: 'nl' },
+      '/nl/heart-basics/faqs',
+    ],
   ])('%j -> %s', (input, expected) => {
     expect(buildPagePath(input)).toBe(expected)
   })
@@ -31,14 +40,25 @@ describe('groupPagesByTopic', () => {
 
   it('groups by topic, drops duplicates and the site map itself', () => {
     expect(groupPagesByTopic(nodes)).toEqual([
-      { name: 'Heart Basics', links: [{ title: 'Heart anatomy', url: '/heart-basics/heart-anatomy' }] },
-      { name: 'Miscellaneous', links: [{ title: 'Contact us', url: '/contact-us' }] },
+      {
+        name: 'Heart Basics',
+        links: [{ title: 'Heart anatomy', url: '/heart-basics/heart-anatomy' }],
+      },
+      {
+        name: 'Miscellaneous',
+        links: [{ title: 'Contact us', url: '/contact-us' }],
+      },
     ])
   })
 
   it('uses the same paths as page creation for regional sites', () => {
-    const [group] = groupPagesByTopic([pageNode('Startseite', 'home', 'Regional')], 'de')
-    expect(group.links[0].url).toBe(buildPagePath({ slug: 'home', topic: 'Regional', language: 'de' }))
+    const [group] = groupPagesByTopic(
+      [pageNode('Startseite', 'home', 'Regional')],
+      'de'
+    )
+    expect(group.links[0].url).toBe(
+      buildPagePath({ slug: 'home', topic: 'Regional', language: 'de' })
+    )
   })
 
   it('does not mutate the query result', () => {

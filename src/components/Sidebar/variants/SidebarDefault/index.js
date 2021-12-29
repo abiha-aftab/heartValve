@@ -13,15 +13,15 @@ const SidebarDefault = ({ sidebarLinks = null }) => {
         setIsOpen(false)
       }
     }
-    window.addEventListener('resize', handleResize);
-    handleResize();
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+    window.addEventListener('resize', handleResize)
+    handleResize()
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
   if (!sidebarLinks) return null
   return (
     <aside className="sidebarDefault">
       <Dropdown isOpen={isOpen} setIsOpen={setIsOpen} />
-        {isOpen && <List sidebarLinks={sidebarLinks} />}
+      {isOpen && <List sidebarLinks={sidebarLinks} />}
     </aside>
   )
 }

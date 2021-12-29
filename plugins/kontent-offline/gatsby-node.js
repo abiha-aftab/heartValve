@@ -9,7 +9,9 @@ const ROOT = path.resolve(__dirname, '../..')
 // The source plugin calls its own copy of axios, so the adapter has to be
 // installed on that exact module instance.
 const sourcePluginAxios = (sourcePlugin) => {
-  const pluginDir = path.dirname(require.resolve(`${sourcePlugin}/package.json`))
+  const pluginDir = path.dirname(
+    require.resolve(`${sourcePlugin}/package.json`)
+  )
   return require(require.resolve('axios', { paths: [pluginDir] }))
 }
 

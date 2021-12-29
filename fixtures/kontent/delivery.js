@@ -44,7 +44,10 @@ const elementValue = (type, value) => {
     case 'taxonomy':
       return {
         taxonomy_group: 'topics',
-        value: (value || []).map((name) => ({ name, codename: toCodename(name) })),
+        value: (value || []).map((name) => ({
+          name,
+          codename: toCodename(name),
+        })),
       }
     case 'asset':
       return {

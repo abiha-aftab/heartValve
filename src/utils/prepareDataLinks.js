@@ -10,8 +10,8 @@ const childLinks = (links, baseURL) =>
       url = isExternalUrl(slug)
         ? slug
         : baseURL === slug || baseURL === ''
-        ? `/${slug}`
-        : `/${baseURL}/${slug}`
+          ? `/${slug}`
+          : `/${baseURL}/${slug}`
     }
     return { name: link.elements.title.value, url }
   })

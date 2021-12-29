@@ -12,7 +12,7 @@ const LayoutRegional = ({ children, languageCode, header, footer }) => {
     const deliveryApiUrl = process.env.GATSBY_DELIVERY_API_URL
     const projectId = process.env.GATSBY_KONTENT_PROJECT_ID
     // Offline builds have neither, and the selector is simply not shown.
-    if (languages.length || !deliveryApiUrl || !projectId) return
+    if (!deliveryApiUrl || !projectId) return
     fetch(`${deliveryApiUrl}${projectId}/languages`)
       .then((response) => {
         if (!response.ok) throw new Error(`HTTP ${response.status}`)

@@ -2,8 +2,12 @@ import { prepareDataLinks } from '../../src/utils/prepareDataLinks'
 import { prepareSidebarLinks } from '../../src/utils/prepareSidebarLinks'
 
 const text = (value) => ({ value })
-const page = (title, slug) => ({ elements: { title: text(title), slug: text(slug) } })
-const link = (title, url) => ({ elements: { title: text(title), url: text(url) } })
+const page = (title, slug) => ({
+  elements: { title: text(title), slug: text(slug) },
+})
+const link = (title, url) => ({
+  elements: { title: text(title), url: text(url) },
+})
 const menu = (title, slug, links) => ({
   elements: { title: text(title), slug: text(slug), links: { value: links } },
 })
@@ -31,13 +35,20 @@ describe('prepareDataLinks', () => {
   })
 
   it('keeps regional header links inside the language site', () => {
-    const links = prepareDataLinks([page('Startseite', 'home'), page('Herzklappen', 'herzklappen')], 'de', 'header')
+    const links = prepareDataLinks(
+      [page('Startseite', 'home'), page('Herzklappen', 'herzklappen')],
+      'de',
+      'header'
+    )
     expect(links.map((item) => item.url)).toEqual(['/de', '/de/herzklappen'])
   })
 
   it('collects links from every regional footer menu', () => {
     const footer = prepareDataLinks(
-      [menu('A', 'de', [page('Herzklappen', 'herzklappen')]), menu('B', 'de', [page('Sitemap', 'site-map')])],
+      [
+        menu('A', 'de', [page('Herzklappen', 'herzklappen')]),
+        menu('B', 'de', [page('Sitemap', 'site-map')]),
+      ],
       'de',
       'footer'
     )
@@ -61,8 +72,16 @@ describe('prepareSidebarLinks', () => {
   })
 
   it('adds a headline for menu groups', () => {
-    const group = { elements: { title: text('Treatments'), menu_items: { value: [heartBasics] } } }
-    expect(prepareSidebarLinks([group])[0]).toEqual({ name: 'Treatments', url: '' })
+    const group = {
+      elements: {
+        title: text('Treatments'),
+        menu_items: { value: [heartBasics] },
+      },
+    }
+    expect(prepareSidebarLinks([group])[0]).toEqual({
+      name: 'Treatments',
+      url: '',
+    })
   })
 
   it('prefixes regional links but not external ones', () => {

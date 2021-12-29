@@ -23,7 +23,7 @@
     &:not(:last-child) {
       margin-bottom: 1rem;
       &:after {
-        content: "|";
+        content: '|';
         margin: 0 1rem;
       }
     }

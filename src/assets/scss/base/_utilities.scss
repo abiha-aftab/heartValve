@@ -1,4 +1,4 @@
-@use "sass:math";
+@use 'sass:math';
 
 /* === Layout === */
 
@@ -90,35 +90,35 @@ $order: 2;
 /* === Utilities === */
 
 $utilities: (
-  "text-align": (
-    "prefix": "text",
-    "values": (
-      "center": center,
+  'text-align': (
+    'prefix': 'text',
+    'values': (
+      'center': center,
     ),
   ),
-  "margin-top": (
-    "prefix": "mt",
-    "values": (
-      "0": 0,
-      "1": 1rem,
-      "2": 2rem,
-      "3": 3rem,
-      "4": 4rem,
-      "5": 5rem,
+  'margin-top': (
+    'prefix': 'mt',
+    'values': (
+      '0': 0,
+      '1': 1rem,
+      '2': 2rem,
+      '3': 3rem,
+      '4': 4rem,
+      '5': 5rem,
     ),
   ),
-  "max-width": (
-    "prefix": "mw",
-    "values": (
-      "auto": auto,
-      "25": 25rem,
+  'max-width': (
+    'prefix': 'mw',
+    'values': (
+      'auto': auto,
+      '25': 25rem,
     ),
   ),
 );
 
 @each $property, $map in $utilities {
-  $prefix: map-get($map, "prefix");
-  $values: map-get($map, "values");
+  $prefix: map-get($map, 'prefix');
+  $values: map-get($map, 'values');
 
   @each $k, $v in $values {
     .#{$prefix}-#{$k} {

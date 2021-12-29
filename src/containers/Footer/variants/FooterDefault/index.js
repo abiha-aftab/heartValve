@@ -31,15 +31,15 @@ const FooterDefault = ({ footerLinks = null, footerText = null }) => {
             )
           })}
         </div>
-        {footerText &&
+        {footerText && (
           <>
-            <hr/>
+            <hr />
             <div className="footerDefault__footer-text">
               <div id="teconsent"></div>
               <RichTextElement value={footerText} />
             </div>
           </>
-        }
+        )}
       </div>
     </footer>
   )

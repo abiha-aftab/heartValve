@@ -11,7 +11,7 @@ import SEO from '../components/SEO'
 import { prepareDataLinks } from '../utils/prepareDataLinks'
 
 export default function PageTemplateRegional({
-  pageContext: { languageCode, pageID, item },
+  pageContext: { languageCode, item },
   data,
 }) {
   const path = item.url.replace(/^\/+|\/+$/g, '')
@@ -23,7 +23,6 @@ export default function PageTemplateRegional({
     modal: { value: modal },
     marketo_form: { value: marketo_form },
     dropdown: { value: dropdown },
-    title: { value: title },
   } = data.page.elements
   const { id, codename } = data.page.system
   const sidebarLinks = prepareSidebarLinks(menu, languageCode)
@@ -61,8 +60,8 @@ export default function PageTemplateRegional({
                 {item.category.toLowerCase() === 'regional'
                   ? item.name
                   : titleMapping.length > 0
-                  ? titleMapping[0].name
-                  : item.category}
+                    ? titleMapping[0].name
+                    : item.category}
               </a>
             </h2>
           )}

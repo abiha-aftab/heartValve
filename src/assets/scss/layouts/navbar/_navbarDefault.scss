@@ -75,8 +75,8 @@
       color: $color-black;
     }
     @include md {
-      // padding: $spacer; 
-      padding: 8px 16px; 
+      // padding: $spacer;
+      padding: 8px 16px;
     }
     &--active {
       @include md {

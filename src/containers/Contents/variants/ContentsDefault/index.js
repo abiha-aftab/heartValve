@@ -1,9 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import SiteLink from '../../../../components/SiteLink'
-import {
-  ImageElement,
-  RichTextElement,
-} from '@kontent-ai/gatsby-components'
+import { ImageElement, RichTextElement } from '@kontent-ai/gatsby-components'
 
 const ContentsDefault = ({ data }) => {
   if (!data) {

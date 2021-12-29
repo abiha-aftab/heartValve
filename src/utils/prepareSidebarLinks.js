@@ -16,13 +16,14 @@ const prepareLinks = (baseURL, links, languageCode) =>
       url = isExternalUrl(slug)
         ? slug
         : baseURL === slug || baseURL === ''
-        ? `/${slug}`
-        : `/${baseURL}/${slug.replace(/^\/+|\/+$/g, '')}`
+          ? `/${slug}`
+          : `/${baseURL}/${slug.replace(/^\/+|\/+$/g, '')}`
     }
     return [
       {
         name: link.elements.title.value,
-        url: languageCode && !isExternalUrl(url) ? `/${languageCode}${url}` : url,
+        url:
+          languageCode && !isExternalUrl(url) ? `/${languageCode}${url}` : url,
       },
     ]
   })

@@ -52,9 +52,7 @@ export const pageQuery = graphql`
         }
       }
     }
-    header: kontentItemHeader (
-      system: {language: {eq: $languageCode}}
-    )  {
+    header: kontentItemHeader(system: { language: { eq: $languageCode } }) {
       system {
         id
         codename
@@ -77,25 +75,25 @@ export const pageQuery = graphql`
         }
       }
     }
-    footer: kontentItemFooter (
-      system: {language: {eq: $languageCode}}
-    ) {
-    system {
-      id
-      codename
-    }
-    elements {
-      text {
-        value
+    footer: kontentItemFooter(system: { language: { eq: $languageCode } }) {
+      system {
+        id
+        codename
       }
-      menu {
-        value {
-          ...nav_menu
+      elements {
+        text {
+          value
+        }
+        menu {
+          value {
+            ...nav_menu
+          }
         }
       }
     }
-  }
-  page: allKontentItemPageTemplate(filter: {system: {language: {eq: $languageCode}}}) {
+    page: allKontentItemPageTemplate(
+      filter: { system: { language: { eq: $languageCode } } }
+    ) {
       nodes {
         system {
           id

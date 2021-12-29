@@ -18,15 +18,15 @@ const FooterRegional = ({ footerLinks = null, footerText = null }) => {
             )
           })}
         </ul>
-        {footerText &&
-        <>
-          <hr/>
-          <div className="footerRegional__footer-text">
-            <div id="teconsent"></div>
-            <RichTextElement value={footerText} />
-          </div>
-        </>
-        }
+        {footerText && (
+          <>
+            <hr />
+            <div className="footerRegional__footer-text">
+              <div id="teconsent"></div>
+              <RichTextElement value={footerText} />
+            </div>
+          </>
+        )}
       </div>
     </footer>
   )

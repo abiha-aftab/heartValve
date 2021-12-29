@@ -7,9 +7,9 @@ import Layout from '../components/Layout/variations/LayoutDefault'
 const NotFound = () => {
   return (
     <Layout>
-      <HeroSmall/>
+      <HeroSmall />
       <div className="section container">
-        <h2>We're sorry. The page you're looking for can't be found.</h2>
+        <h2>We’re sorry. The page you’re looking for can’t be found.</h2>
         <p>Can we help you find something? We have some suggestions below:</p>
         <ul className="list list--unstyled">
           <li className="list__item">

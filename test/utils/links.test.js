@@ -18,7 +18,9 @@ describe('localisePath', () => {
   it('leaves default-language, external and already prefixed paths alone', () => {
     expect(localisePath('/heart-basics', null)).toBe('/heart-basics')
     expect(localisePath('/heart-basics', 'default')).toBe('/heart-basics')
-    expect(localisePath('https://example.com', 'de')).toBe('https://example.com')
+    expect(localisePath('https://example.com', 'de')).toBe(
+      'https://example.com'
+    )
     expect(localisePath('/de/herzklappen', 'de')).toBe('/de/herzklappen')
   })
 })

@@ -76,7 +76,8 @@ exports.createPages = async ({ actions, graphql, reporter }) => {
 
     createPage({
       path,
-      component: language === 'default' ? templates.page : templates.pageRegional,
+      component:
+        language === 'default' ? templates.page : templates.pageRegional,
       context: {
         languageCode: language,
         pageID,

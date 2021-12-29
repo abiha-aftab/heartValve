@@ -48,10 +48,7 @@ const SEO = ({ title, description, image, pathname = '', lang = 'en' }) => {
       <meta name="twitter:image" content={seo.image} />
       {trustArc && <script src={trustArc} async />}
       {headScripts.map((script, index) => (
-        <script
-          key={index}
-          dangerouslySetInnerHTML={{ __html: script }}
-        />
+        <script key={index} dangerouslySetInnerHTML={{ __html: script }} />
       ))}
     </>
   )

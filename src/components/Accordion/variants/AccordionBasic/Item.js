@@ -2,7 +2,7 @@ import React from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { RichTextElement } from '@kontent-ai/gatsby-components'
 
-const AccordionItem = ({ item, index, isActive, setIsActive, accordianId }) => {
+const AccordionItem = ({ item, index, isActive, setIsActive }) => {
   const {
     title: { value: title },
     description: { value: body, modular_content },
@@ -63,20 +63,39 @@ const AccordionItem = ({ item, index, isActive, setIsActive, accordianId }) => {
               <RichTextElement
                 value={body}
                 linkedItems={modular_content}
-                resolveLinkedItem={linkedItem => {
+                resolveLinkedItem={(linkedItem) => {
                   if (!linkedItem) {
-                    return <strong style={{ color: "red" }}>⚠ Linked item is no longer in the response.</strong>
+                    return (
+                      <strong style={{ color: 'red' }}>
+                        ⚠ Linked item is no longer in the response.
+                      </strong>
+                    )
                   }
-                  const { __typename, elements } = linkedItem;
+                  const { __typename, elements } = linkedItem
                   // Case for multi columns
-                  if (__typename === "kontent_item_summaries") {
-                    return <div className="grid-1 grid-md-2 gap-1 gap-md-2">
-                      {elements.rich_text.value.map((column, index) => {
-                        return <div className={`column-grid column-${index}`} key={index}><RichTextElement value={column.elements.rich_text.value} /></div>
-                      })}
-                    </div>
+                  if (__typename === 'kontent_item_summaries') {
+                    return (
+                      <div className="grid-1 grid-md-2 gap-1 gap-md-2">
+                        {elements.rich_text.value.map((column, index) => {
+                          return (
+                            <div
+                              className={`column-grid column-${index}`}
+                              key={index}
+                            >
+                              <RichTextElement
+                                value={column.elements.rich_text.value}
+                              />
+                            </div>
+                          )
+                        })}
+                      </div>
+                    )
                   }
-                  return <strong style={{ color: "red" }}>⚠ Item not resolved.</strong>
+                  return (
+                    <strong style={{ color: 'red' }}>
+                      ⚠ Item not resolved.
+                    </strong>
+                  )
                 }}
               />
             </div>

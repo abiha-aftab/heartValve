@@ -4,7 +4,13 @@ import Nav from './Nav'
 import { Link } from 'gatsby'
 import logo from '../../../../assets/images/logo.svg'
 
-const NavbarRegional = ({ languageCode, navLogo, navLinks = null, languages = [], languageSelectorText }) => {
+const NavbarRegional = ({
+  languageCode,
+  navLogo,
+  navLinks = null,
+  languages = [],
+  languageSelectorText,
+}) => {
   const [activeDropdown, setActiveDropdown] = useState(null)
   const [mobile, setMobile] = useState(false)
   const toggleMobile = () => {

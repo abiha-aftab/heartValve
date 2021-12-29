@@ -33,7 +33,7 @@ const Dropdown = ({
             : 'navbarDefault__nav-link'
         }
         onClick={(e) => toggleDropdown(e, id)}
-        aria-expanded={activeDropdown === id ? "true":"false"}
+        aria-expanded={activeDropdown === id ? 'true' : 'false'}
       >
         {name} {activeDropdown === id ? <FaCaretUp /> : <FaCaretDown />}
       </button>
@@ -52,11 +52,22 @@ const Dropdown = ({
               const { name, url } = link
               return (
                 <li className="navbarDefault__dropdown-item" key={index}>
-                  {
-                    isExternalUrl(url)
-                      ? <a href={url} target="_blank" rel="noreferrer" className="navbarDefault__dropdown-link">{name}</a>
-                      : <button onClick={(e) => toggleDropdown(e, id)}><Link to={url} className="navbarDefault__dropdown-link">{name}</Link></button>
-                  }
+                  {isExternalUrl(url) ? (
+                    <a
+                      href={url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="navbarDefault__dropdown-link"
+                    >
+                      {name}
+                    </a>
+                  ) : (
+                    <button onClick={(e) => toggleDropdown(e, id)}>
+                      <Link to={url} className="navbarDefault__dropdown-link">
+                        {name}
+                      </Link>
+                    </button>
+                  )}
                 </li>
               )
             })}

@@ -5,8 +5,14 @@ module.exports = {
     '\\.(css|scss)$': '<rootDir>/test/style-mock.js',
     '\\.(jpe?g|png|svg)$': '<rootDir>/test/file-mock.js',
   },
-  testPathIgnorePatterns: ['/node_modules/', '<rootDir>/.cache/', '<rootDir>/public/'],
-  transformIgnorePatterns: ['/node_modules/(?!(gatsby|gatsby-script|gatsby-link)/)'],
+  testPathIgnorePatterns: [
+    '/node_modules/',
+    '<rootDir>/.cache/',
+    '<rootDir>/public/',
+  ],
+  transformIgnorePatterns: [
+    '/node_modules/(?!(gatsby|gatsby-script|gatsby-link)/)',
+  ],
   setupFilesAfterEnv: ['<rootDir>/test/setup.js'],
   globals: { __PATH_PREFIX__: '' },
 }

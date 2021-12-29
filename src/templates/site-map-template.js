@@ -44,7 +44,9 @@ export const pageQuery = graphql`
         }
       }
     }
-    page: allKontentItemPageTemplate(filter: {system: {language: {eq: $languageCode}}}) {
+    page: allKontentItemPageTemplate(
+      filter: { system: { language: { eq: $languageCode } } }
+    ) {
       nodes {
         system {
           id
